@@ -6,10 +6,16 @@
 #include "shader.h"
 #include "input.h"
 #include "animation.h"
+#include "entityMesh.h"
+#include "entity.h"
 
 #include <cmath>
 
 //some globals
+EntityMesh* island;
+Matrix44 islandModel;
+
+
 Mesh* mesh = NULL;
 Texture* texture = NULL;
 Shader* shader = NULL;
@@ -73,6 +79,8 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 
 	// example of shader loading using the shaders manager
 	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
+
+	island = new EntityMesh(mesh,texture,shader,Vector4(1,1,1,1));
 
 	//hide the cursor
 	SDL_ShowCursor(!mouse_locked); //hide or show the mouse
@@ -153,10 +161,11 @@ void Game::render(void)
 		camera->lookAt(eye, center, up);
 	}
 
-	Matrix44 islandModel;
-	RenderMesh(islandModel, mesh, texture, shader, camera);
-	RenderMesh(planeModel, planeMesh, planeTexture, shader, camera);
-	RenderMesh(bombModel, bombMesh, bombTexture, shader, camera);
+
+	island->render();
+	//RenderMesh(islandModel, mesh, texture, shader, camera);
+	//RenderMesh(planeModel, planeMesh, planeTexture, shader, camera);
+	//RenderMesh(bombModel, bombMesh, bombTexture, shader, camera);
 	//mesh->renderBounding(islandModel);
 	//RenderIslands();
 

@@ -731,7 +731,7 @@ bool Image::loadPNG(const char* filename, bool flip_y)
 	std::vector<unsigned char> buffer;
 	if (!readFileBin(filename, buffer))
 		return false;
-	return loadPNG(buffer);
+	return loadPNG(buffer, flip_y);
 }
 
 bool Image::loadPNG(std::vector<unsigned char>& buffer, bool flip_y)
