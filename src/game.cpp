@@ -15,14 +15,18 @@
 EntityMesh* island;
 Matrix44 islandModel;
 
-
 Mesh* mesh = NULL;
 Texture* texture = NULL;
 Shader* shader = NULL;
 
+EntityMesh* player;
+Matrix44 playerModel;
+Mesh* playerMesh = NULL;
+Texture* playerTex = NULL;
+Shader* playerShader = NULL;
+
 Mesh* planeMesh = NULL;
 Texture* planeTexture = NULL;
-Matrix44 planeModel;
 bool cameraLocked = true;
 
 Mesh* bombMesh = NULL;
@@ -71,6 +75,9 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	mesh = Mesh::Get("data/island.ASE");
 	texture = Texture::Get("data/island_color.tga");
 
+	playerMesh = Mesh::Get("data/Chr_Adventure_Viking_01_0.obj");
+	playerTex = Texture::Get("data/PolygonMinis_Texture.png");
+
 	planeMesh = Mesh::Get("data/spitfire.ASE");
 	planeTexture = Texture::Get("data/spitfire_color_spec.tga");
 
@@ -80,7 +87,8 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	// example of shader loading using the shaders manager
 	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
 
-	island = new EntityMesh(mesh,texture,shader,Vector4(1,1,1,1));
+	island = new EntityMesh(mesh, texture,shader,Vector4(1,1,1,1));
+	player = new EntityMesh(playerMesh, playerTex, shader, Vector4(1, 1, 1, 1));
 
 	//hide the cursor
 	SDL_ShowCursor(!mouse_locked); //hide or show the mouse
@@ -155,14 +163,16 @@ void Game::render(void)
 	//m.rotate(angle*DEG2RAD, Vector3(0, 1, 0));
 
 	if (cameraLocked) {
-		Vector3 eye = planeModel * Vector3(0.0f, 9.0f, 16.0f);
-		Vector3 center = planeModel * Vector3(0.0f, 0.0f, -20.0f);
-		Vector3 up = planeModel.rotateVector(Vector3(0.0f, 1.0f, 0.0f));
+		Vector3 eye = playerModel * Vector3(0.0f, 3.0f, -6.0f);
+		Vector3 center = playerModel * Vector3(0.0f, 0.0f, 10.0f);
+		Vector3 up = playerModel.rotateVector(Vector3(0.0f, 1.0f, 0.0f));
 		camera->lookAt(eye, center, up);
 	}
 
 
 	island->render();
+	player->model = playerModel;
+	player->render();
 	//RenderMesh(islandModel, mesh, texture, shader, camera);
 	//RenderMesh(planeModel, planeMesh, planeTexture, shader, camera);
 	//RenderMesh(bombModel, bombMesh, bombTexture, shader, camera);
@@ -200,13 +210,13 @@ void Game::update(double seconds_elapsed)
 	if (cameraLocked) {
 		float planeSpeed = 50.0f * elapsed_time;
 		float rotSpeed = 90.0f * DEG2RAD * elapsed_time;
-		if (Input::isKeyPressed(SDL_SCANCODE_W)) planeModel.translate(0.0f, 0.0f, -planeSpeed);
-		if (Input::isKeyPressed(SDL_SCANCODE_S)) planeModel.translate(0.0f, 0.0f, planeSpeed);
+		if (Input::isKeyPressed(SDL_SCANCODE_W)) playerModel.translate(0.0f, 0.0f, planeSpeed);
+		if (Input::isKeyPressed(SDL_SCANCODE_S)) playerModel.translate(0.0f, 0.0f, -planeSpeed);
 
-		if (Input::isKeyPressed(SDL_SCANCODE_A)) planeModel.rotate(-rotSpeed, Vector3(0.0f, 1.0f, 0.0f));
-		if (Input::isKeyPressed(SDL_SCANCODE_D)) planeModel.rotate(rotSpeed, Vector3(0.0f, 1.0f, 0.0f));
-		if (Input::isKeyPressed(SDL_SCANCODE_E)) planeModel.rotate(rotSpeed, Vector3(0.0f, 0.0f, 1.0f));
-		if (Input::isKeyPressed(SDL_SCANCODE_Q)) planeModel.rotate(-rotSpeed, Vector3(0.0f, 0.0f, 1.0f));
+		if (Input::isKeyPressed(SDL_SCANCODE_A)) playerModel.rotate(-rotSpeed, Vector3(0.0f, 1.0f, 0.0f));
+		if (Input::isKeyPressed(SDL_SCANCODE_D)) playerModel.rotate(rotSpeed, Vector3(0.0f, 1.0f, 0.0f));
+		if (Input::isKeyPressed(SDL_SCANCODE_E)) playerModel.rotate(rotSpeed, Vector3(0.0f, 0.0f, 1.0f));
+		if (Input::isKeyPressed(SDL_SCANCODE_Q)) playerModel.rotate(-rotSpeed, Vector3(0.0f, 0.0f, 1.0f));
 	}
 	else {
 		//async input to move the camera around
@@ -224,7 +234,7 @@ void Game::update(double seconds_elapsed)
 	}
 
 	if (bombAttached) {
-		bombModel = bombOffset * planeModel;
+		bombModel = bombOffset * playerModel;
 	}
 	else {
 		bombModel.translateGlobal(0.0f, -9.8f * elapsed_time * 4, 0.0f);
