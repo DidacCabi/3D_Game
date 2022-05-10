@@ -8,12 +8,20 @@
 #include "animation.h"
 #include "entityMesh.h"
 #include "entity.h"
+#include "stage.h"
 
 #include <cmath>
 
 //some globals
+extern std::vector<Stage*> stages;
+extern STAGE_ID currentStage;
+
 EntityMesh* island;
 Matrix44 islandModel;
+
+std::vector<Mesh*> platformMeshes;
+std::vector<Matrix44> platformModels;
+std::vector<EntityMesh*> platforms;
 
 Mesh* mesh = NULL;
 Texture* texture = NULL;
@@ -23,7 +31,6 @@ EntityMesh* player;
 Matrix44 playerModel;
 Mesh* playerMesh = NULL;
 Texture* playerTex = NULL;
-Shader* playerShader = NULL;
 
 Mesh* planeMesh = NULL;
 Texture* planeTexture = NULL;
@@ -71,6 +78,8 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	//texture = new Texture();
  	//texture->load("data/texture.tga");
 
+	InitStages();
+
 	// example of loading Mesh from Mesh Manager
 	mesh = Mesh::Get("data/island.ASE");
 	texture = Texture::Get("data/island_color.tga");
@@ -84,10 +93,16 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	bombMesh = Mesh::Get("data/torpedo.ASE");
 	bombTexture = Texture::Get("data/torpedo.tga");
 
+	platformMeshes.reserve(20);
+	platformModels.reserve(20);
+	platforms.reserve(20);
+	platformMeshes.push_back(Mesh::Get("data/platforms/blockSnow.obj"));
+	platformMeshes.push_back(Mesh::Get("data/platforms/blockSnowCliff.obj"));
 	// example of shader loading using the shaders manager
 	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
 
-	island = new EntityMesh(mesh, texture,shader,Vector4(1,1,1,1));
+	platforms.push_back(new EntityMesh(platformMeshes[0], NULL, shader, Vector4(1, 1, 1, 1)));
+	island = new EntityMesh(mesh, texture, shader, Vector4(1,1,1,1));
 	player = new EntityMesh(playerMesh, playerTex, shader, Vector4(1, 1, 1, 1));
 
 	//hide the cursor
@@ -169,6 +184,7 @@ void Game::render(void)
 		camera->lookAt(eye, center, up);
 	}
 
+	GetCurrentStage()->render();
 
 	island->render();
 	player->model = playerModel;
@@ -191,6 +207,8 @@ void Game::render(void)
 
 void Game::update(double seconds_elapsed)
 {
+	GetCurrentStage()->update(seconds_elapsed);
+
 	float speed = seconds_elapsed * mouse_speed; //the speed is defined by the seconds_elapsed so it goes constant
 
 	//example
@@ -240,6 +258,10 @@ void Game::update(double seconds_elapsed)
 		bombModel.translateGlobal(0.0f, -9.8f * elapsed_time * 4, 0.0f);
 	}
 
+	if (Input::wasKeyPressed(SDL_SCANCODE_P)) { 
+		int nextStageIndex = ((int)currentStage + 1) % stages.size();
+		SetStage((STAGE_ID)nextStageIndex);
+	}
 	//to navigate with the mouse fixed in the middle
 	if (mouse_locked)
 		Input::centerMouse();

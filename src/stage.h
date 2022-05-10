@@ -10,6 +10,7 @@ enum STAGE_ID {
 	INTRO,
 	TUTORIAL,
 	PLAY,
+	EDITOR,
 	END
 };
 
@@ -43,11 +44,20 @@ public:
 	void update(float seconds_elapsed);
 };
 
+class EditorStage : public Stage {
+public:
+	STAGE_ID GetId();
+	void render();
+	void update(float seconds_elapsed);
+	void onKeyDown(SDL_KeyboardEvent event);
+	void renderInFront();
+};
+
 class EndStage : public Stage {
 public:
 	STAGE_ID GetId();
 	void render();
-	void update(float seconds_elapsed) {};
+	void update(float seconds_elapsed);
 };
 
 

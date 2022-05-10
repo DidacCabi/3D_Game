@@ -21,7 +21,7 @@ void EntityMesh::render() {
     shader->enable();
     shader->setUniform("u_color", color);
     shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
-    shader->setUniform("u_texture", texture, 0);
+    if(texture != NULL) shader->setUniform("u_texture", texture, 0);
     shader->setUniform("u_time", time);
     shader->setUniform("u_model", model);
 
