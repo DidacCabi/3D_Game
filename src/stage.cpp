@@ -73,7 +73,7 @@ void EditorStage::renderInFront() {
 }
 
 
-
+		
 STAGE_ID EndStage::GetId() {
 	return STAGE_ID::END;
 };
