@@ -31,16 +31,7 @@ EntityMesh* player;
 Mesh* playerMesh = NULL;
 Texture* playerTex = NULL;
 
-Mesh* planeMesh = NULL;
-Texture* planeTexture = NULL;
 bool cameraLocked = true;
-
-Mesh* bombMesh = NULL;
-Texture* bombTexture = NULL;
-Matrix44 bombModel;
-Matrix44 bombOffset;
-bool bombAttached = true;
-
 
 Animation* anim = NULL;
 float angle = 0;
@@ -67,15 +58,10 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	glEnable( GL_CULL_FACE ); //render both sides of every triangle
 	glEnable( GL_DEPTH_TEST ); //check the occlusions using the Z buffer
 
-	bombOffset.setTranslation(0.0f, -2.0f, 0.0f);
 	//create our camera
 	camera = new Camera();
 	camera->lookAt(Vector3(0.f,100.f, 100.f),Vector3(0.f,0.f,0.f), Vector3(0.f,1.f,0.f)); //position the camera and point to 0,0,0
 	camera->setPerspective(70.f,window_width/(float)window_height,0.1f,10000.f); //set the projection, we want to be perspective
-
-	//load one texture without using the Texture Manager (Texture::Get would use the manager)
-	//texture = new Texture();
- 	//texture->load("data/texture.tga");
 
 	InitStages();
 
@@ -85,12 +71,6 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 
 	playerMesh = Mesh::Get("data/Chr_Adventure_Viking_01_0.obj");
 	playerTex = Texture::Get("data/PolygonMinis_Texture.png");
-
-	planeMesh = Mesh::Get("data/spitfire.ASE");
-	planeTexture = Texture::Get("data/spitfire_color_spec.tga");
-
-	bombMesh = Mesh::Get("data/torpedo.ASE");
-	bombTexture = Texture::Get("data/torpedo.tga");
 
 	platformMeshes.reserve(20);
 	platformModels.reserve(20);
