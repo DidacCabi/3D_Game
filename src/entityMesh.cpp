@@ -10,7 +10,7 @@ EntityMesh::EntityMesh(Mesh* mesh, Texture* tex, Shader* shader, Vector4 color) 
 
 void EntityMesh::render() {
 
-    assert(mesh != null, "mesh in RenderMesh was null");
+    assert(mesh != NULL, "mesh in RenderMesh was null");
     if (!shader) return;
 
     //get the last camera that was activated

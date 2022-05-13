@@ -4,6 +4,7 @@
 #include "stage.h"
 #include "entityMesh.h"
 #include "camera.h"
+#include "collision.h"
 
 std::vector<Stage*> stages;
 
@@ -113,9 +114,9 @@ void EditorStage::render() {
 	}
 };
 void EditorStage::update(float seconds_elapsed) {
+
 	float speed = 0.5f;
 	Camera* camera = Game::instance->camera;
-
 	if (Input::mouse_state & SDL_BUTTON_LEFT) //is left button pressed?
 	{
 		camera->rotate(Input::mouse_delta.x * 0.005f, Vector3(0.0f, -1.0f, 0.0f));
@@ -125,11 +126,15 @@ void EditorStage::update(float seconds_elapsed) {
 	cameraMove(camera, speed);
 
 	if(Input::wasKeyPressed(SDL_SCANCODE_G)) renderInFront(platformMeshes[0], platformTexs[0]);
+	
+
 };
-void EditorStage::onKeyDown(SDL_KeyboardEvent event) {
+void EditorStage::onKeyDown(SDL_KeyboardEvent event) { 
 	switch (event.keysym.sym) {
 		case SDLK_g: renderInFront(platformMeshes[0], NULL); break;
+		
 	}
+
 }
 void EditorStage::renderInFront(Mesh* mesh, Texture* tex) {
 	Camera* cam = Game::instance->camera;

@@ -9,7 +9,7 @@
 #include "entityMesh.h"
 #include "entity.h"
 #include "stage.h"
-
+#include "collision.h"
 #include <cmath>
 
 //some globals
@@ -93,7 +93,7 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 }
 
 void RenderMesh(Matrix44& model, Mesh* a_mesh, Texture* tex, Shader* a_shader, Camera* cam) {
-	assert(a_mesh != null, "mesh in RenderMesh was null");
+	assert(a_mesh != NULL, "mesh in RenderMesh was null");
 	if (!a_shader) return;
 
 	//enable shader
@@ -202,6 +202,7 @@ void Game::onKeyDown( SDL_KeyboardEvent event )
 	{
 		case SDLK_ESCAPE: must_exit = true; break; //ESC key, kill the app
 		case SDLK_F1: Shader::ReloadAll(); break; 
+		case SDLK_h: Collision::RayPick(camera);   // TODO Temporary collision tester 
 	}
 }
 
