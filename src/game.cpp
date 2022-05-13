@@ -28,7 +28,6 @@ Texture* texture = NULL;
 Shader* shader = NULL;
 
 EntityMesh* player;
-Matrix44 playerModel;
 Mesh* playerMesh = NULL;
 Texture* playerTex = NULL;
 
@@ -177,18 +176,11 @@ void Game::render(void)
    
 	//m.rotate(angle*DEG2RAD, Vector3(0, 1, 0));
 
-	if (cameraLocked) {
-		Vector3 eye = playerModel * Vector3(0.0f, 3.0f, -6.0f);
-		Vector3 center = playerModel * Vector3(0.0f, 0.0f, 10.0f);
-		Vector3 up = playerModel.rotateVector(Vector3(0.0f, 1.0f, 0.0f));
-		camera->lookAt(eye, center, up);
-	}
 
 	GetCurrentStage()->render();
 
 	island->render();
-	player->model = playerModel;
-	player->render();
+
 	//RenderMesh(islandModel, mesh, texture, shader, camera);
 	//RenderMesh(planeModel, planeMesh, planeTexture, shader, camera);
 	//RenderMesh(bombModel, bombMesh, bombTexture, shader, camera);
@@ -208,55 +200,7 @@ void Game::render(void)
 void Game::update(double seconds_elapsed)
 {
 	GetCurrentStage()->update(seconds_elapsed);
-
-	float speed = seconds_elapsed * mouse_speed; //the speed is defined by the seconds_elapsed so it goes constant
-
-	//example
-	angle += (float)seconds_elapsed * 10.0f;
-
-	//mouse input to rotate the cam
-	if ((Input::mouse_state & SDL_BUTTON_LEFT) || mouse_locked ) //is left button pressed?
-	{
-		camera->rotate(Input::mouse_delta.x * 0.005f, Vector3(0.0f,-1.0f,0.0f));
-		camera->rotate(Input::mouse_delta.y * 0.005f, camera->getLocalVector( Vector3(-1.0f,0.0f,0.0f)));
-	}
-
-	if (Input::wasKeyPressed(SDL_SCANCODE_TAB)) {
-		cameraLocked = !cameraLocked;
-	}
-
-	if (cameraLocked) {
-		float planeSpeed = 50.0f * elapsed_time;
-		float rotSpeed = 90.0f * DEG2RAD * elapsed_time;
-		if (Input::isKeyPressed(SDL_SCANCODE_W)) playerModel.translate(0.0f, 0.0f, planeSpeed);
-		if (Input::isKeyPressed(SDL_SCANCODE_S)) playerModel.translate(0.0f, 0.0f, -planeSpeed);
-
-		if (Input::isKeyPressed(SDL_SCANCODE_A)) playerModel.rotate(-rotSpeed, Vector3(0.0f, 1.0f, 0.0f));
-		if (Input::isKeyPressed(SDL_SCANCODE_D)) playerModel.rotate(rotSpeed, Vector3(0.0f, 1.0f, 0.0f));
-		if (Input::isKeyPressed(SDL_SCANCODE_E)) playerModel.rotate(rotSpeed, Vector3(0.0f, 0.0f, 1.0f));
-		if (Input::isKeyPressed(SDL_SCANCODE_Q)) playerModel.rotate(-rotSpeed, Vector3(0.0f, 0.0f, 1.0f));
-	}
-	else {
-		//async input to move the camera around
-		if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) speed *= 10; //move faster with left shift
-		if (Input::isKeyPressed(SDL_SCANCODE_W) || Input::isKeyPressed(SDL_SCANCODE_UP)) camera->move(Vector3(0.0f, 0.0f, 1.0f) * speed);
-		if (Input::isKeyPressed(SDL_SCANCODE_S) || Input::isKeyPressed(SDL_SCANCODE_DOWN)) camera->move(Vector3(0.0f, 0.0f, -1.0f) * speed);
-		if (Input::isKeyPressed(SDL_SCANCODE_A) || Input::isKeyPressed(SDL_SCANCODE_LEFT)) camera->move(Vector3(1.0f, 0.0f, 0.0f) * speed);
-		if (Input::isKeyPressed(SDL_SCANCODE_D) || Input::isKeyPressed(SDL_SCANCODE_RIGHT)) camera->move(Vector3(-1.0f, 0.0f, 0.0f) * speed);
-		if (Input::isKeyPressed(SDL_SCANCODE_E)) camera->move(Vector3(0.0f, -1.0f, 0.0f) * speed);
-		if (Input::isKeyPressed(SDL_SCANCODE_Q)) camera->move(Vector3(0.0f, 1.0f, 0.0f) * speed);
-	}
-
-	if (Input::wasKeyPressed(SDL_SCANCODE_F)) {
-		bombAttached = false;
-	}
-
-	if (bombAttached) {
-		bombModel = bombOffset * playerModel;
-	}
-	else {
-		bombModel.translateGlobal(0.0f, -9.8f * elapsed_time * 4, 0.0f);
-	}
+	
 
 	if (Input::wasKeyPressed(SDL_SCANCODE_P)) { 
 		int nextStageIndex = ((int)currentStage + 1) % stages.size();

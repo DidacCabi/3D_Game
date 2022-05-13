@@ -5,6 +5,8 @@
 #include "game.h"
 #include "includes.h"
 #include "utils.h"
+#include "mesh.h"
+#include "texture.h"
 
 enum STAGE_ID {
 	INTRO,
@@ -50,7 +52,7 @@ public:
 	void render();
 	void update(float seconds_elapsed);
 	void onKeyDown(SDL_KeyboardEvent event);
-	void renderInFront();
+	void renderInFront(Mesh* mesh, Texture* tex);
 };
 
 class EndStage : public Stage {
