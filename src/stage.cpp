@@ -79,11 +79,14 @@ void PlayStage::update(float seconds_elapsed) {
 		float rotSpeed = 90.0f * DEG2RAD * seconds_elapsed;
 		if (Input::isKeyPressed(SDL_SCANCODE_W)) playerModel.translate(0.0f, 0.0f, planeSpeed);
 		if (Input::isKeyPressed(SDL_SCANCODE_S)) playerModel.translate(0.0f, 0.0f, -planeSpeed);
-
-		if (Input::isKeyPressed(SDL_SCANCODE_A)) playerModel.rotate(-rotSpeed, Vector3(0.0f, 1.0f, 0.0f));
-		if (Input::isKeyPressed(SDL_SCANCODE_D)) playerModel.rotate(rotSpeed, Vector3(0.0f, 1.0f, 0.0f));
-		if (Input::isKeyPressed(SDL_SCANCODE_E)) playerModel.rotate(rotSpeed, Vector3(0.0f, 0.0f, 1.0f));
-		if (Input::isKeyPressed(SDL_SCANCODE_Q)) playerModel.rotate(-rotSpeed, Vector3(0.0f, 0.0f, 1.0f));
+	
+		if (Input::isKeyPressed(SDL_SCANCODE_A)) {
+			playerModel.translate(planeSpeed, 0.0f, 0.0f);
+		}
+		if (Input::isKeyPressed(SDL_SCANCODE_D)) playerModel.translate(-planeSpeed, 0.0f, 0.0f);
+		// TODO 
+		if (Input::isKeyPressed(SDL_SCANCODE_SPACE)) playerModel.translate(0.0f,5.0f,0.0f); //JUMP without gravity
+		if (Input::wasKeyPressed(SDL_SCANCODE_E)) playerModel.translate(0.0f, 0.0f, 50.0f); //DASH
 	}
 	else {
 		//async input to move the camera around
@@ -131,7 +134,7 @@ void EditorStage::update(float seconds_elapsed) {
 };
 void EditorStage::onKeyDown(SDL_KeyboardEvent event) { 
 	switch (event.keysym.sym) {
-		case SDLK_g: renderInFront(platformMeshes[0], NULL); break;
+		//case SDLK_g: renderInFront(platformMeshes[0], NULL); break;
 		
 	}
 
