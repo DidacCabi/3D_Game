@@ -20,6 +20,7 @@ EntityMesh* island;
 Matrix44 islandModel;
 
 std::vector<Mesh*> platformMeshes;
+std::vector<Texture*> platformTexs;
 std::vector<Matrix44> platformModels;
 std::vector<EntityMesh*> platforms;
 
@@ -73,10 +74,13 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	playerTex = Texture::Get("data/PolygonMinis_Texture.png");
 
 	platformMeshes.reserve(20);
+	platformTexs.reserve(20);
 	platformModels.reserve(20);
 	platforms.reserve(20);
 	platformMeshes.push_back(Mesh::Get("data/platforms/blockSnow.obj"));
+	platformTexs.push_back(Texture::Get("data/platforms/blockSnow.png"));
 	platformMeshes.push_back(Mesh::Get("data/platforms/blockSnowCliff.obj"));
+	platformTexs.push_back(Texture::Get("data/platforms/blockSnowCliff.png"));
 	// example of shader loading using the shaders manager
 	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
 

@@ -62,6 +62,7 @@ public:
 	void update(float seconds_elapsed);
 };
 
+void cameraMove(Camera* camera, float speed);
 
 Stage* GetStage(STAGE_ID id);
 Stage* GetCurrentStage();
