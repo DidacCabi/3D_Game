@@ -12,15 +12,20 @@ STAGE_ID currentStage = STAGE_ID::INTRO;
 
 extern Shader* shader;
 extern std::vector<EntityMesh*> platforms;
+extern std::vector<EntityMesh*> staticObjects;
 extern std::vector<Mesh*> platformMeshes;
 extern std::vector<Texture*> platformTexs;
 extern std::vector<Matrix44> platformModels;
+
 std::vector<EntityMesh*> editorPlatforms;
 extern EntityMesh* player;
 Matrix44 playerModel;
 
 bool mouse_locked;
 extern bool cameraLocked;
+
+int direction = 0;
+
 
 //Introduction Stage methods
 STAGE_ID IntroStage::GetId() {
@@ -54,6 +59,11 @@ void PlayStage::render() {
 		Vector3 up = player->model.rotateVector(Vector3(0.0f, 1.0f, 0.0f));
 		Game::instance->camera->lookAt(eye, center, up);
 	}
+	for (size_t i = 0; i < staticObjects.size(); i++)
+	{
+		EntityMesh* obj = staticObjects[i];
+		obj->render();
+	}
 	player->render();
 	player->model = playerModel;
 
@@ -75,18 +85,43 @@ void PlayStage::update(float seconds_elapsed) {
 	}
 
 	if (cameraLocked) {
-		float planeSpeed = 50.0f * seconds_elapsed;
-		float rotSpeed = 90.0f * DEG2RAD * seconds_elapsed;
-		if (Input::isKeyPressed(SDL_SCANCODE_W)) playerModel.translate(0.0f, 0.0f, planeSpeed);
-		if (Input::isKeyPressed(SDL_SCANCODE_S)) playerModel.translate(0.0f, 0.0f, -planeSpeed);
+		float planeSpeed = 10.0f * seconds_elapsed;
+		if (Input::isKeyPressed(SDL_SCANCODE_W)) {
+			playerModel.translate(0.0f, 0.0f, planeSpeed);
+			direction = 0;
+		}
+		if (Input::isKeyPressed(SDL_SCANCODE_S)) { 
+			playerModel.translate(0.0f, 0.0f, -planeSpeed);
+			direction = 1;
+		}
 	
 		if (Input::isKeyPressed(SDL_SCANCODE_A)) {
 			playerModel.translate(planeSpeed, 0.0f, 0.0f);
+			direction = 2;
 		}
-		if (Input::isKeyPressed(SDL_SCANCODE_D)) playerModel.translate(-planeSpeed, 0.0f, 0.0f);
+		if (Input::isKeyPressed(SDL_SCANCODE_D)) { 
+			playerModel.translate(-planeSpeed, 0.0f, 0.0f);
+			direction = 3;
+		}
 		// TODO 
 		if (Input::isKeyPressed(SDL_SCANCODE_SPACE)) playerModel.translate(0.0f,5.0f,0.0f); //JUMP without gravity
-		if (Input::wasKeyPressed(SDL_SCANCODE_E)) playerModel.translate(0.0f, 0.0f, 50.0f); //DASH
+		if (Input::wasKeyPressed(SDL_SCANCODE_E)) {   //Dash
+			float boost = 80.0f;
+			switch(direction){
+			case 0:
+				playerModel.translate(0.0f, 0.0f, planeSpeed * boost);
+				break;
+			case 1:
+				playerModel.translate(0.0f, 0.0f, -planeSpeed * boost);
+				break;
+			case 2:
+				playerModel.translate(planeSpeed * boost, 0.0f, 0.0f);
+				break;
+			case 3:
+				playerModel.translate(-planeSpeed * boost, 0.0f, 0.0f);
+				break;
+			}
+		}
 	}
 	else {
 		//async input to move the camera around

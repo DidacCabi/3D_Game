@@ -24,6 +24,7 @@ std::vector<Texture*> platformTexs;
 std::vector<Matrix44> platformModels;
 std::vector<EntityMesh*> platforms;
 
+std::vector<EntityMesh*> staticObjects;
 Mesh* mesh = NULL;
 Texture* texture = NULL;
 Shader* shader = NULL;
@@ -84,6 +85,7 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	// example of shader loading using the shaders manager
 	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
 
+	staticObjects.push_back(new EntityMesh(Mesh::Get("data/sky.ASE"), Texture::Get("data/sky.tga"), shader, Vector4(1, 1, 1, 1)));
 	platforms.push_back(new EntityMesh(platformMeshes[0], NULL, shader, Vector4(1, 1, 1, 1)));
 	island = new EntityMesh(mesh, texture, shader, Vector4(1,1,1,1));
 	player = new EntityMesh(playerMesh, playerTex, shader, Vector4(1, 1, 1, 1));
@@ -163,7 +165,7 @@ void Game::render(void)
 
 	GetCurrentStage()->render();
 
-	island->render();
+	//island->render();
 
 	//RenderMesh(islandModel, mesh, texture, shader, camera);
 	//RenderMesh(planeModel, planeMesh, planeTexture, shader, camera);
