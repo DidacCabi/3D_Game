@@ -9,10 +9,13 @@
 
 class EntityMesh : public Entity {
 public:
-    EntityMesh(Mesh* mesh, Texture* tex, Shader* shader, Vector4 color);
+    EntityMesh::EntityMesh(Mesh* mesh, Texture* tex,  Shader* shader, Vector4 color, std::string meshPath, std::string texPath);
+    EntityMesh::EntityMesh(Mesh* mesh, Texture* tex, Shader* shader, Vector4 color);
     //Attributes of this class 
     Mesh* mesh;
     Texture* texture;
+    std::string meshPath; 
+    std::string texPath;
     Shader* shader;
     Vector4 color;
 

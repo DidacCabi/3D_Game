@@ -16,9 +16,6 @@
 extern std::vector<Stage*> stages;
 extern STAGE_ID currentStage;
 
-EntityMesh* island;
-Matrix44 islandModel;
-
 std::vector<Mesh*> platformMeshes;
 std::vector<Texture*> platformTexs;
 std::vector<Matrix44> platformModels;
@@ -67,10 +64,7 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 
 	InitStages();
 
-	// example of loading Mesh from Mesh Manager
-	mesh = Mesh::Get("data/island.ASE");
-	texture = Texture::Get("data/island_color.tga");
-
+	//loading Mesh from Mesh Manager
 	playerMesh = Mesh::Get("data/Chr_Adventure_Viking_01_0.obj");
 	playerTex = Texture::Get("data/PolygonMinis_Texture.png");
 
@@ -86,8 +80,7 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
 
 	staticObjects.push_back(new EntityMesh(Mesh::Get("data/sky.ASE"), Texture::Get("data/sky.tga"), shader, Vector4(1, 1, 1, 1)));
-	platforms.push_back(new EntityMesh(platformMeshes[0], NULL, shader, Vector4(1, 1, 1, 1)));
-	island = new EntityMesh(mesh, texture, shader, Vector4(1,1,1,1));
+	platforms.push_back(new EntityMesh(platformMeshes[0], NULL, shader, Vector4(1,1,1,1)));
 	player = new EntityMesh(playerMesh, playerTex, shader, Vector4(1, 1, 1, 1));
 
 	//hide the cursor

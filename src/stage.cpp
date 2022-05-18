@@ -5,6 +5,8 @@
 #include "entityMesh.h"
 #include "camera.h"
 #include "collision.h"
+#include <iostream>
+#include <fstream>
 
 std::vector<Stage*> stages;
 
@@ -31,7 +33,9 @@ int direction = 0;
 STAGE_ID IntroStage::GetId() {
 	return STAGE_ID::INTRO;
 }
-void IntroStage::render() {};
+void IntroStage::render() {
+	drawText((Game::instance->window_width / 2) - 280, Game::instance->window_height / 2, "INTRO STAGE", Vector3(1, 1, 1), 10.0f);
+};
 void IntroStage::update(float seconds_elapsed) {
 	if (Input::isKeyPressed(SDL_SCANCODE_S)) {
 		SetStage((STAGE_ID)TUTORIAL);
@@ -44,7 +48,9 @@ void IntroStage::update(float seconds_elapsed) {
 STAGE_ID TutorialStage::GetId() {
 	return STAGE_ID::TUTORIAL;
 }
-void TutorialStage::render() {};
+void TutorialStage::render() {
+	drawText((Game::instance->window_width / 2) - 290, Game::instance->window_height / 2, "TUTORIAL STAGE", Vector3(1, 0.5, 1), 8.0f);
+};
 void TutorialStage::update(float seconds_elapsed) {};
 
 
@@ -104,7 +110,7 @@ void PlayStage::update(float seconds_elapsed) {
 			direction = 3;
 		}
 		// TODO 
-		if (Input::isKeyPressed(SDL_SCANCODE_SPACE)) playerModel.translate(0.0f,5.0f,0.0f); //JUMP without gravity
+		if (Input::wasKeyPressed(SDL_SCANCODE_SPACE)) playerModel.translate(0.0f,5.0f,0.0f); //JUMP 
 		if (Input::wasKeyPressed(SDL_SCANCODE_E)) {   //Dash
 			float boost = 80.0f;
 			switch(direction){
@@ -128,16 +134,10 @@ void PlayStage::update(float seconds_elapsed) {
 		cameraMove(camera, speed);
 	}
 
-	/*if (Input::wasKeyPressed(SDL_SCANCODE_F)) {
-		bombAttached = false;
+	float gravity = -6.0f * seconds_elapsed;    //implementació cutre de gravity
+	if (playerModel.getTranslation().y > 0) {    //TODO
+		playerModel.translate(0, gravity, 0);
 	}
-
-	if (bombAttached) {
-		bombModel = bombOffset * playerModel;
-	}
-	else {
-		bombModel.translateGlobal(0.0f, -9.8f * elapsed_time * 4, 0.0f);
-	}*/
 };
 
 
@@ -150,6 +150,7 @@ void EditorStage::render() {
 		editorPlatforms[i]->mesh->renderBounding(editorPlatforms[i]->model);
 		editorPlatforms[i]->render();
 	}
+	drawText(Game::instance->window_width - 140, 5, "Y value: " + std::to_string((-1) * y_value), Vector3(0.5, 1, 1), 2.0f);  //show the altitude selected ('u' and 'j' to modify it)
 };
 void EditorStage::update(float seconds_elapsed) {
 
@@ -163,9 +164,11 @@ void EditorStage::update(float seconds_elapsed) {
 
 	cameraMove(camera, speed);
 
-	if(Input::wasKeyPressed(SDL_SCANCODE_G)) renderInFront(platformMeshes[0], platformTexs[0]);
-	
-
+	if (Input::wasKeyPressed(SDL_SCANCODE_G)) renderInFront(platformMeshes[0], platformTexs[0]);
+	if (Input::wasKeyPressed(SDL_SCANCODE_T)) saveScene();
+	if (Input::wasKeyPressed(SDL_SCANCODE_R)) readScene();
+	if (Input::wasKeyPressed(SDL_SCANCODE_U)) y_value--;
+	if (Input::wasKeyPressed(SDL_SCANCODE_J)) y_value++;
 };
 void EditorStage::onKeyDown(SDL_KeyboardEvent event) { 
 	switch (event.keysym.sym) {
@@ -175,22 +178,67 @@ void EditorStage::onKeyDown(SDL_KeyboardEvent event) {
 
 }
 void EditorStage::renderInFront(Mesh* mesh, Texture* tex) {
-	Camera* cam = Game::instance->camera;
-	Vector3 spawnPos = cam->center;
+	Game* g = Game::instance;
+	Camera* cam = g->camera;
+
+	Vector2 mouse = Input::mouse_position;
+	Vector3 dir = cam->getRayDirection(mouse.x, mouse.y, g->window_width, g->window_height);
+	Vector3 rayOrigin = cam->eye;
+
+	Vector3 spawnPos = RayPlaneCollision(Vector3(0,y_value,0), Vector3(0, 1, 0), rayOrigin, dir);
 	Matrix44 model;
 	model.translate(spawnPos.x, spawnPos.y, spawnPos.z);
 
-	EntityMesh* entity = new EntityMesh(mesh,tex,shader,Vector4(1,1,1,1));
+
+	EntityMesh* entity = new EntityMesh(mesh,tex,shader,Vector4(1,1,1,1), "data/platforms/blockSnow.obj", "data/platforms/blockSnow.png");
 	entity->model = model;
 	editorPlatforms.push_back(entity);
 }
+void EditorStage::saveScene() {
+	std::ofstream myfile;
+	printf("\nCreating file to save the actual editor scene...\n");
+	myfile.open("editorScene1.txt");
+	myfile << editorPlatforms.size() << "\n";
+	for (size_t i = 0; i < editorPlatforms.size(); i++)
+	{
+		EntityMesh* platform = editorPlatforms[i];
+		Matrix44 m = platform->model;
+		
+		for (int i = 0; i < 16; i++)  //print the model to the file
+		{
+			myfile << m.m[i] << ", ";
+		}
 
+		myfile << "\n" << '"' << platform->meshPath << '"' << "\n";
+		myfile << '"' << platform->texPath << '"' << "\n";
+	}
+
+	myfile.close();
+}
+void EditorStage::readScene() {
+	std::string line;
+	std::ifstream myfile;
+	printf("\nOpening file to charge the saved editor scene...\n");
+	myfile.open("editorScene1.txt");
+	if (myfile.is_open())
+	{
+		while (std::getline(myfile, line))
+		{
+			std::cout << line << '\n';
+		}
+		myfile.close();
+	}
+
+	else std::cout << "\n[!]Unable to open file";
+}
 
 		
 STAGE_ID EndStage::GetId() {
 	return STAGE_ID::END;
 };
-void EndStage::render() {};
+void EndStage::render() {
+	drawText((Game::instance->window_width / 2) - 290, Game::instance->window_height / 2, "END STAGE", Vector3(0.6, 0.5, 1), 8.0f);
+};
 void EndStage::update(float seconds_elapsed) {};
 
 

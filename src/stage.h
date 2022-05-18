@@ -48,11 +48,15 @@ public:
 
 class EditorStage : public Stage {
 public:
+	int y_value = 0;   //altitude to place the objects 
+
 	STAGE_ID GetId();
 	void render();
 	void update(float seconds_elapsed);
 	void onKeyDown(SDL_KeyboardEvent event);
 	void renderInFront(Mesh* mesh, Texture* tex);
+	void saveScene();
+	void readScene();
 };
 
 class EndStage : public Stage {
