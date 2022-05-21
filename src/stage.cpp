@@ -150,7 +150,6 @@ void EditorStage::render() {
 		editorPlatforms[i]->mesh->renderBounding(editorPlatforms[i]->model);
 		editorPlatforms[i]->render();
 	}
-	drawText(Game::instance->window_width - 140, 5, "Y value: " + std::to_string((-1) * y_value), Vector3(0.5, 1, 1), 2.0f);  //show the altitude selected ('u' and 'j' to modify it)
 };
 void EditorStage::update(float seconds_elapsed) {
 
@@ -164,11 +163,38 @@ void EditorStage::update(float seconds_elapsed) {
 
 	cameraMove(camera, speed);
 
-	if (Input::wasKeyPressed(SDL_SCANCODE_G)) renderInFront(platformMeshes[0], platformTexs[0]);
+	if (Input::wasKeyPressed(SDL_SCANCODE_G)) {
+		switch (objectNum) {
+		case 0:
+			renderInFront(platformMeshes[0], platformTexs[0], "data/platforms/blockSnow.obj", "data/platforms/blockSnow.png");
+			break;
+		case 1:
+			renderInFront(platformMeshes[1], platformTexs[1], "data/platforms/blockSnowCliff.obj", "data/platforms/blockSnowCliff.png");
+			break;
+		case 2:
+			renderInFront(platformMeshes[1], platformTexs[1], "data/platforms/blockRounded.obj", "data/platforms/blockRounded.png");
+			break;
+		}
+	}
+	if (Input::wasKeyPressed(SDL_SCANCODE_F)) objectNum = (objectNum + 1) % 3;
+
 	if (Input::wasKeyPressed(SDL_SCANCODE_T)) saveScene();
 	if (Input::wasKeyPressed(SDL_SCANCODE_R)) readScene();
-	if (Input::wasKeyPressed(SDL_SCANCODE_U)) y_value--;
-	if (Input::wasKeyPressed(SDL_SCANCODE_J)) y_value++;
+
+	if (Input::wasKeyPressed(SDL_SCANCODE_K)) selectObject();
+
+	if (Input::wasKeyPressed(SDL_SCANCODE_X) && selected != NULL) selected->model.rotate(10 * DEG2RAD, Vector3(0, 1, 0));
+	if (Input::wasKeyPressed(SDL_SCANCODE_Z) && selected != NULL) selected->model.rotate(-10 * DEG2RAD, Vector3(0, 1, 0));
+
+	if (Input::isKeyPressed(SDL_SCANCODE_UP) && selected != NULL) selected->model.translate(0, 0, 0.5);
+	if (Input::isKeyPressed(SDL_SCANCODE_DOWN) && selected != NULL) selected->model.translate(0, 0, -0.5);
+	if (Input::isKeyPressed(SDL_SCANCODE_LEFT) && selected != NULL) selected->model.translate(0.5,0,0);
+	if (Input::isKeyPressed(SDL_SCANCODE_RIGHT) && selected != NULL) selected->model.translate(-0.5, 0, 0);
+	if (Input::isKeyPressed(SDL_SCANCODE_M) && selected != NULL) selected->model.translate(0, 0.5, 0);
+	if (Input::isKeyPressed(SDL_SCANCODE_N) && selected != NULL) selected->model.translate(0, -0.5, 0);
+
+
+
 };
 void EditorStage::onKeyDown(SDL_KeyboardEvent event) { 
 	switch (event.keysym.sym) {
@@ -177,7 +203,7 @@ void EditorStage::onKeyDown(SDL_KeyboardEvent event) {
 	}
 
 }
-void EditorStage::renderInFront(Mesh* mesh, Texture* tex) {
+void EditorStage::renderInFront(Mesh* mesh, Texture* tex, std::string meshPath, std::string texPath) {
 	Game* g = Game::instance;
 	Camera* cam = g->camera;
 
@@ -185,14 +211,18 @@ void EditorStage::renderInFront(Mesh* mesh, Texture* tex) {
 	Vector3 dir = cam->getRayDirection(mouse.x, mouse.y, g->window_width, g->window_height);
 	Vector3 rayOrigin = cam->eye;
 
-	Vector3 spawnPos = RayPlaneCollision(Vector3(0,y_value,0), Vector3(0, 1, 0), rayOrigin, dir);
+	Vector3 spawnPos = RayPlaneCollision(Vector3(0,0,0), Vector3(0, 1, 0), rayOrigin, dir);
 	Matrix44 model;
 	model.translate(spawnPos.x, spawnPos.y, spawnPos.z);
 
 
-	EntityMesh* entity = new EntityMesh(mesh,tex,shader,Vector4(1,1,1,1), "data/platforms/blockSnow.obj", "data/platforms/blockSnow.png");
+	EntityMesh* entity = new EntityMesh(mesh,tex,shader,Vector4(1,1,1,1), meshPath, texPath);
 	entity->model = model;
+	editorPlatforms.reserve(1);
 	editorPlatforms.push_back(entity);
+}
+void EditorStage::selectObject() {
+	selected = Collision::RayPick(Game::instance->camera);
 }
 void EditorStage::saveScene() {
 	std::ofstream myfile;
@@ -204,13 +234,13 @@ void EditorStage::saveScene() {
 		EntityMesh* platform = editorPlatforms[i];
 		Matrix44 m = platform->model;
 		
-		for (int i = 0; i < 16; i++)  //print the model to the file
+		for (int j = 0; j < 16; j++)  //print the model to the file
 		{
-			myfile << m.m[i] << ", ";
+			myfile << m.m[j] << ", ";
 		}
 
-		myfile << "\n" << '"' << platform->meshPath << '"' << "\n";
-		myfile << '"' << platform->texPath << '"' << "\n";
+		myfile << "\n" << platform->meshPath << "\n";
+		myfile << platform->texPath  << "\n";
 	}
 
 	myfile.close();
@@ -218,13 +248,33 @@ void EditorStage::saveScene() {
 void EditorStage::readScene() {
 	std::string line;
 	std::ifstream myfile;
+	Matrix44 model;
+	std::string meshPath;
+	std::string texPath;
 	printf("\nOpening file to charge the saved editor scene...\n");
 	myfile.open("editorScene1.txt");
 	if (myfile.is_open())
 	{
-		while (std::getline(myfile, line))
+		std::getline(myfile, line);
+		int numObjects = std::stoi(line);
+		for (size_t i = 0; i < numObjects; i++)
 		{
-			std::cout << line << '\n';
+			for (int j = 0; j < 16; j++) {
+				std::getline(myfile, line, ',');
+				std::cout << "Element of the model : "<< line << "\n"; 
+				model.m[j] = std::atof(line.c_str());
+			}
+			std::getline(myfile, line);
+			std::getline(myfile, line);
+			std::cout << "MeshPath: " << line << "\n";
+			meshPath = line;
+			std::getline(myfile, line);
+			std::cout << "TexPath: " << line << "\n";
+			texPath = line;
+			
+			EntityMesh* object = new EntityMesh(NULL, NULL, shader, Vector4(1,1,1,1), meshPath, texPath);
+			object->model = model;
+			staticObjects.push_back(object);
 		}
 		myfile.close();
 	}
@@ -266,10 +316,10 @@ void InitStages() {
 
 void cameraMove(Camera* camera, float speed) {
 	if (Input::isKeyPressed(SDL_SCANCODE_LSHIFT)) speed *= 10; //move faster with left shift
-	if (Input::isKeyPressed(SDL_SCANCODE_W) || Input::isKeyPressed(SDL_SCANCODE_UP)) camera->move(Vector3(0.0f, 0.0f, 1.0f) * speed);
-	if (Input::isKeyPressed(SDL_SCANCODE_S) || Input::isKeyPressed(SDL_SCANCODE_DOWN)) camera->move(Vector3(0.0f, 0.0f, -1.0f) * speed);
-	if (Input::isKeyPressed(SDL_SCANCODE_A) || Input::isKeyPressed(SDL_SCANCODE_LEFT)) camera->move(Vector3(1.0f, 0.0f, 0.0f) * speed);
-	if (Input::isKeyPressed(SDL_SCANCODE_D) || Input::isKeyPressed(SDL_SCANCODE_RIGHT)) camera->move(Vector3(-1.0f, 0.0f, 0.0f) * speed);
+	if (Input::isKeyPressed(SDL_SCANCODE_W)) camera->move(Vector3(0.0f, 0.0f, 1.0f) * speed);
+	if (Input::isKeyPressed(SDL_SCANCODE_S)) camera->move(Vector3(0.0f, 0.0f, -1.0f) * speed);
+	if (Input::isKeyPressed(SDL_SCANCODE_A)) camera->move(Vector3(1.0f, 0.0f, 0.0f) * speed);
+	if (Input::isKeyPressed(SDL_SCANCODE_D)) camera->move(Vector3(-1.0f, 0.0f, 0.0f) * speed);
 	if (Input::isKeyPressed(SDL_SCANCODE_E)) camera->move(Vector3(0.0f, -1.0f, 0.0f) * speed);
 	if (Input::isKeyPressed(SDL_SCANCODE_Q)) camera->move(Vector3(0.0f, 1.0f, 0.0f) * speed);
 }

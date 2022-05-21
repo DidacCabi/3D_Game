@@ -1,11 +1,13 @@
 #include "entityMesh.h"
 
 EntityMesh::EntityMesh(Mesh* mesh, Texture* tex, Shader * shader, Vector4 color = Vector4(1,1,1,1), std::string meshPath = "", std::string texPath = "") {
-    this->mesh = mesh;
+    if (mesh == NULL) this->mesh = Mesh::Get(meshPath.c_str());
+    else this->mesh = mesh;
     this->model = model;
     this->color = color;
     this->shader = shader;
-    this->texture = tex;
+    if (tex == NULL) this->texture = Texture::Get(texPath.c_str());
+    else this->texture = tex;
     this->texPath = texPath;
     this->meshPath = meshPath;
 }

@@ -2,11 +2,12 @@
 #define COLLISION_H
 
 #include "camera.h"
+#include "entityMesh.h"
 
 class Collision {
 	public:
 
-		static void RayPick(Camera* cam);
+		static EntityMesh* RayPick(Camera* cam);
 
 };
 

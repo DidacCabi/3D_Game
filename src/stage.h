@@ -7,6 +7,7 @@
 #include "utils.h"
 #include "mesh.h"
 #include "texture.h"
+#include "entityMesh.h"
 
 enum STAGE_ID {
 	INTRO,
@@ -48,13 +49,15 @@ public:
 
 class EditorStage : public Stage {
 public:
-	int y_value = 0;   //altitude to place the objects 
+	int objectNum = 0;  //to choose which object we will render on the editor
+	EntityMesh* selected = NULL;
 
 	STAGE_ID GetId();
 	void render();
 	void update(float seconds_elapsed);
 	void onKeyDown(SDL_KeyboardEvent event);
-	void renderInFront(Mesh* mesh, Texture* tex);
+	void renderInFront(Mesh* mesh, Texture* tex, std::string meshPath, std::string texPath);
+	void EditorStage::selectObject();
 	void saveScene();
 	void readScene();
 };

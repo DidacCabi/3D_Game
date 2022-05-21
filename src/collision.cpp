@@ -1,11 +1,10 @@
 #include "collision.h"
 #include "input.h"
-#include "entityMesh.h"
 #include "game.h"
 
 extern std::vector<EntityMesh*> editorPlatforms;
 
-void Collision::RayPick(Camera* cam) {
+EntityMesh* Collision::RayPick(Camera* cam) {
 
 	Vector2 mouse = Input::mouse_position;
 	Game* g = Game::instance;
@@ -17,7 +16,9 @@ void Collision::RayPick(Camera* cam) {
 		Vector3 pos, normal;
 
 		if (entity->mesh->testRayCollision(entity->model, rayOrigin, dir, pos, normal)) {
-			std::cout << "col" << std::endl;
+			std::cout << "selected" << std::endl;
+			return entity;
 		}
 	}
+	return NULL;
 }
