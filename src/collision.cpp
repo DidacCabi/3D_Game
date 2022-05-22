@@ -23,21 +23,28 @@ EntityMesh* Collision::RayPick(Camera* cam) {
 	return NULL;
 }
 
-bool Collision::testPlayerCollisions(EntityMesh* player, Vector3 playerPos) {
-	/*for (size_t i = 0; i < editorPlatforms.size(); i++)
+void Collision::testSidePlayerColl(EntityMesh* player, Vector3 nextPos, float elapsed_time) {
+	for (size_t i = 0; i < editorPlatforms.size(); i++)
 	{
 		Vector3 coll, collnorm;
 		EntityMesh* platform = editorPlatforms[i];
-		if (platform->mesh->testSphereCollision(platform->model, player->getPosition(), 1.5f, coll, collnorm)) return true;
+		Vector3 playerPos = player->getPosition();
+		if (!platform->mesh->testSphereCollision(platform->model, playerPos, 1.0f, coll, collnorm)) continue;
+		Vector3 pushAway = normalize(coll - playerPos) * elapsed_time;
+		nextPos = playerPos - pushAway;
 	}
-	return false;*/
+}
+
+bool Collision::testBelowPlayerColl(EntityMesh* player) {
+	
 	Vector3 coll, collnorm;
 
 	for (size_t i = 0; i < editorPlatforms.size(); i++)
 	{
 		Vector3 coll, collnorm;
 		EntityMesh* platform = editorPlatforms[i];
-		if (platform->mesh->testRayCollision(platform->model, player->getPosition(), Vector3(0, -1, 0), coll, collnorm, 1.0f, true)) return true;
+		Vector3 playerPos = player->getPosition();
+		if (platform->mesh->testRayCollision(platform->model, playerPos, Vector3(0, -1, 0), coll, collnorm, 0.2f, true)) return true;
 	}
 	return false; 
 

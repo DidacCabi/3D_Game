@@ -5,11 +5,11 @@
 #include "entityMesh.h"
 
 class Collision {
-	public:
+public:
 
-		static EntityMesh* RayPick(Camera* cam);
-		static bool testPlayerCollisions(EntityMesh* player, Vector3 playerPos);
+	static EntityMesh* RayPick(Camera* cam);
+	static void testSidePlayerColl(EntityMesh* player, Vector3 nextPos, float elapsed_time);
+	static bool testBelowPlayerColl(EntityMesh* player);
+
 };
-
-
 #endif 

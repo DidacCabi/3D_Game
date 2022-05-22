@@ -42,6 +42,9 @@ public:
 
 class PlayStage : public Stage {
 public:
+	float jumpTime = 0;
+	bool canJump = true;
+
 	STAGE_ID GetId();
 	void render();
 	void update(float seconds_elapsed);
@@ -50,13 +53,15 @@ public:
 class EditorStage : public Stage {
 public:
 	int objectNum = 0;  //to choose which object we will render on the editor
+	int decorationNum = 0;
+	bool mode = false;   //switch between decoration and platforms mode
 	EntityMesh* selected = NULL;
 
 	STAGE_ID GetId();
 	void render();
 	void update(float seconds_elapsed);
 	void onKeyDown(SDL_KeyboardEvent event);
-	void renderInFront(Mesh* mesh, Texture* tex, std::string meshPath, std::string texPath);
+	void renderInFront(std::string meshPath, std::string texPath);
 	void EditorStage::selectObject();
 	void saveScene();
 	void readScene();

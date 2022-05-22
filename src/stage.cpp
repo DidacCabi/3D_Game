@@ -76,7 +76,8 @@ void PlayStage::render() {
 };
 void PlayStage::update(float seconds_elapsed) {
 
-	float speed = seconds_elapsed * 50.0f;//mouse_speed; //the speed is defined by the seconds_elapsed so it goes constant
+	float speed = seconds_elapsed * 50.0f; //mouse_speed, the speed is defined by the seconds_elapsed so it goes constant
+	Vector3 playerVel;
 
 	Camera* camera = Game::instance->camera;
 	//mouse input to rotate the cam
@@ -84,47 +85,62 @@ void PlayStage::update(float seconds_elapsed) {
 	{
 		camera->rotate(Input::mouse_delta.x * 0.005f, Vector3(0.0f, -1.0f, 0.0f));
 		camera->rotate(Input::mouse_delta.y * 0.005f, camera->getLocalVector(Vector3(-1.0f, 0.0f, 0.0f)));
-	}
+	}	
 
 	if (Input::wasKeyPressed(SDL_SCANCODE_TAB)) {
 		cameraLocked = !cameraLocked;
 	}
 
 	if (cameraLocked) {
-		float planeSpeed = 10.0f * seconds_elapsed;
+		float playerSpeed = 10.0f * seconds_elapsed;
 		if (Input::isKeyPressed(SDL_SCANCODE_W)) {
-			playerModel.translate(0.0f, 0.0f, planeSpeed);
+			//playerVel = playerVel + (Vector3(0,0,1) * playerSpeed);
+			playerModel.translate(0.0f, 0.0f, playerSpeed);
 			direction = 0;
 		}
 		if (Input::isKeyPressed(SDL_SCANCODE_S)) { 
-			playerModel.translate(0.0f, 0.0f, -planeSpeed);
+			//playerVel = playerVel + (Vector3(0, 0, -1) * playerSpeed);
+			playerModel.translate(0.0f, 0.0f, -playerSpeed);
 			direction = 1;
 		}
 	
 		if (Input::isKeyPressed(SDL_SCANCODE_A)) {
-			playerModel.translate(planeSpeed, 0.0f, 0.0f);
+			//playerVel = playerVel + (Vector3(1, 0, 0) * playerSpeed);
+			playerModel.translate(playerSpeed, 0.0f, 0.0f);
 			direction = 2;
 		}
 		if (Input::isKeyPressed(SDL_SCANCODE_D)) { 
-			playerModel.translate(-planeSpeed, 0.0f, 0.0f);
+			//playerVel = playerVel + (Vector3(-1, 0, 0) * playerSpeed);
+			playerModel.translate(-playerSpeed, 0.0f, 0.0f);
 			direction = 3;
 		}
 		// TODO 
-		if (Input::wasKeyPressed(SDL_SCANCODE_SPACE)) playerModel.translate(0.0f,5.0f,0.0f); //JUMP 
+		if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && canJump){
+			jumpTime += seconds_elapsed;
+			if (jumpTime < 1.0f) {
+				//playerVel = playerVel + (Vector3(0, 1, 0) * playerSpeed);
+				playerModel.translate(0.0f, 10.0f * seconds_elapsed, 0.0f); //JUMP
+			}
+			else {
+				canJump = false; 
+				jumpTime = 0;
+			}
+		}
+
 		if (Input::wasKeyPressed(SDL_SCANCODE_E)) {   //Dash
 			float boost = 80.0f;
 			switch(direction){
 			case 0:
-				playerModel.translate(0.0f, 0.0f, planeSpeed * boost);
+				playerModel.translate(0.0f, 0.0f, playerSpeed * boost);
 				break;
 			case 1:
-				playerModel.translate(0.0f, 0.0f, -planeSpeed * boost);
+				playerModel.translate(0.0f, 0.0f, -playerSpeed * boost);
 				break;
 			case 2:
-				playerModel.translate(planeSpeed * boost, 0.0f, 0.0f);
+				playerModel.translate(playerSpeed * boost, 0.0f, 0.0f);
 				break;
 			case 3:
-				playerModel.translate(-planeSpeed * boost, 0.0f, 0.0f);
+				playerModel.translate(-playerSpeed * boost, 0.0f, 0.0f);
 				break;
 			}
 		}
@@ -135,9 +151,20 @@ void PlayStage::update(float seconds_elapsed) {
 	}
 
 	float gravity = -6.0f * seconds_elapsed;    //implementació cutre de gravity
-	if (playerModel.getTranslation().y > 0 && !Collision::testPlayerCollisions(player, player->model.getTranslation())) {    //TODO
+	if (player->getPosition().y > 0 && !Collision::testBelowPlayerColl(player)) {    //TODO
+		//playerVel = playerVel + (Vector3(0, 0, -1) * gravity);
 		playerModel.translate(0, gravity, 0);
 	}
+	else {
+		canJump = true;
+	}
+	
+	//Vector3 nextPos = player->getPosition() + playerVel;
+	//Collision::testSidePlayerColl(player, nextPos, seconds_elapsed);
+
+	//player->model.translate(nextPos.x, nextPos.y, nextPos.z);
+
+
 };
 
 
@@ -164,19 +191,51 @@ void EditorStage::update(float seconds_elapsed) {
 	cameraMove(camera, speed);
 
 	if (Input::wasKeyPressed(SDL_SCANCODE_G)) {
-		switch (objectNum) {
-		case 0:
-			renderInFront(platformMeshes[0], platformTexs[0], "data/platforms/blockSnow.obj", "data/platforms/blockSnow.png");
-			break;
-		case 1:
-			renderInFront(platformMeshes[1], platformTexs[1], "data/platforms/blockSnowCliff.obj", "data/platforms/blockSnowCliff.png");
-			break;
-		case 2:
-			renderInFront(platformMeshes[1], platformTexs[1], "data/platforms/blockRounded.obj", "data/platforms/blockRounded.png");
-			break;
+		if (!mode) {
+			switch (objectNum) {
+			case 0:
+				renderInFront("data/platforms/blockSnow.obj", "data/platforms/blockSnow.png");
+				break;
+			case 1:
+				renderInFront("data/platforms/blockSnowCliff.obj", "data/platforms/blockSnowCliff.png");
+				break;
+			case 2:
+				renderInFront("data / platforms / blockRounded.obj", "data / platforms / blockRounded.png");
+				break;
+			}
+		}
+		else {
+			switch (decorationNum) {
+			case 0:
+				renderInFront("data/decoration/SM_Env_Cactus_14_74.obj", "data/decoration/westernTex.png");
+				break;
+			case 1:
+				renderInFront("data/decoration/SM_Env_Cactus_13_53.obj", "data/decoration/westernTex.png");
+				break;
+			case 2:
+				renderInFront("data/decoration/SM_Env_Cactus_12_64.obj", "data/decoration/westernTex.png");
+				break;
+			case 3:
+				renderInFront("data/decoration/SM_Env_Cactus_11_63.obj", "data/decoration/westernTex.png");
+				break;
+			case 4:
+				renderInFront("data/decoration/SM_Env_Cactus_10_5.obj", "data/decoration/westernTex.png");
+				break;
+			case 5:
+				renderInFront("data/decoration/SM_Env_Cactus_09_61.obj", "data/decoration/westernTex.png");
+				break;
+			case 6:
+				renderInFront("data/decoration/SM_Env_Cactus_07_0.obj", "data/decoration/westernTex.png");
+				break;
+			}
 		}
 	}
-	if (Input::wasKeyPressed(SDL_SCANCODE_F)) objectNum = (objectNum + 1) % 3;
+
+	if (Input::wasKeyPressed(SDL_SCANCODE_F)) {
+		if (!mode) objectNum = (objectNum + 1) % 3;
+		else decorationNum = (decorationNum + 1) % 7;
+	}
+	if (Input::wasKeyPressed(SDL_SCANCODE_1)) mode = !mode;
 
 	if (Input::wasKeyPressed(SDL_SCANCODE_T)) saveScene();
 	if (Input::wasKeyPressed(SDL_SCANCODE_R)) readScene();
@@ -203,7 +262,7 @@ void EditorStage::onKeyDown(SDL_KeyboardEvent event) {
 	}
 
 }
-void EditorStage::renderInFront(Mesh* mesh, Texture* tex, std::string meshPath, std::string texPath) {
+void EditorStage::renderInFront(std::string meshPath, std::string texPath) {
 	Game* g = Game::instance;
 	Camera* cam = g->camera;
 
@@ -216,7 +275,7 @@ void EditorStage::renderInFront(Mesh* mesh, Texture* tex, std::string meshPath, 
 	model.translate(spawnPos.x, spawnPos.y, spawnPos.z);
 
 
-	EntityMesh* entity = new EntityMesh(mesh,tex,shader,Vector4(1,1,1,1), meshPath, texPath);
+	EntityMesh* entity = new EntityMesh(NULL, NULL, shader, Vector4(1, 1, 1, 1), meshPath, texPath);
 	entity->model = model;
 	editorPlatforms.reserve(1);
 	editorPlatforms.push_back(entity);

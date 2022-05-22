@@ -16,10 +16,9 @@
 extern std::vector<Stage*> stages;
 extern STAGE_ID currentStage;
 
-std::vector<Mesh*> platformMeshes;
-std::vector<Texture*> platformTexs;
-std::vector<Matrix44> platformModels;
-std::vector<EntityMesh*> platforms;
+
+//std::vector<Matrix44> platformModels;
+//std::vector<EntityMesh*> platforms;
 
 std::vector<EntityMesh*> staticObjects;
 Mesh* mesh = NULL;
@@ -68,23 +67,23 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	playerMesh = Mesh::Get("data/Chr_Adventure_Viking_01_0.obj");
 	playerTex = Texture::Get("data/PolygonMinis_Texture.png");
 
-	platformMeshes.reserve(20);
-	platformTexs.reserve(20);
-	platformModels.reserve(20);
-	platforms.reserve(20);
-	platformMeshes.push_back(Mesh::Get("data/platforms/blockSnow.obj"));
+	/*platformMeshes.reserve(20);
+	platformTexs.reserve(20);*/
+	//platformModels.reserve(20);
+	//platforms.reserve(20);
+	/*platformMeshes.push_back(Mesh::Get("data/platforms/blockSnow.obj"));
 	platformTexs.push_back(Texture::Get("data/platforms/blockSnow.png"));
 	platformMeshes.push_back(Mesh::Get("data/platforms/block.obj"));
 	platformTexs.push_back(Texture::Get("data/platforms/block.png"));
 	platformMeshes.push_back(Mesh::Get("data/platforms/blockRounded.obj"));
-	platformTexs.push_back(Texture::Get("data/platforms/blockRounded.png"));
+	platformTexs.push_back(Texture::Get("data/platforms/blockRounded.png"));*/
 	// example of shader loading using the shaders manager
 	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
 
 	staticObjects.reserve(40);
 	staticObjects.push_back(new EntityMesh(Mesh::Get("data/sky.ASE"), Texture::Get("data/sky.tga"), shader, Vector4(1, 1, 1, 1)));
-	platforms.push_back(new EntityMesh(platformMeshes[0], platformTexs[0], shader, Vector4(1, 1, 1, 1)));
-	platforms.push_back(new EntityMesh(platformMeshes[1], platformTexs[1], shader, Vector4(1, 1, 1, 1)));
+	//platforms.push_back(new EntityMesh(platformMeshes[0], platformTexs[0], shader, Vector4(1, 1, 1, 1)));
+	//platforms.push_back(new EntityMesh(platformMeshes[1], platformTexs[1], shader, Vector4(1, 1, 1, 1)));
 	player = new EntityMesh(playerMesh, playerTex, shader, Vector4(1, 1, 1, 1));
 
 	//hide the cursor
