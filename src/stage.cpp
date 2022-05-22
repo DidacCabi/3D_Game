@@ -135,7 +135,7 @@ void PlayStage::update(float seconds_elapsed) {
 	}
 
 	float gravity = -6.0f * seconds_elapsed;    //implementació cutre de gravity
-	if (playerModel.getTranslation().y > 0) {    //TODO
+	if (playerModel.getTranslation().y > 0 && !Collision::testPlayerCollisions(player, player->model.getTranslation())) {    //TODO
 		playerModel.translate(0, gravity, 0);
 	}
 };

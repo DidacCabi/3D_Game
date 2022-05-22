@@ -8,7 +8,7 @@ class Collision {
 	public:
 
 		static EntityMesh* RayPick(Camera* cam);
-
+		static bool testPlayerCollisions(EntityMesh* player, Vector3 playerPos);
 };
 
 
