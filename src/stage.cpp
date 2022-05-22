@@ -252,15 +252,11 @@ void EditorStage::update(float seconds_elapsed) {
 	if (Input::isKeyPressed(SDL_SCANCODE_M) && selected != NULL) selected->model.translate(0, 0.5, 0);
 	if (Input::isKeyPressed(SDL_SCANCODE_N) && selected != NULL) selected->model.translate(0, -0.5, 0);
 
-
-
 };
 void EditorStage::onKeyDown(SDL_KeyboardEvent event) { 
 	switch (event.keysym.sym) {
 		//case SDLK_g: renderInFront(platformMeshes[0], NULL); break;
-		
 	}
-
 }
 void EditorStage::renderInFront(std::string meshPath, std::string texPath) {
 	Game* g = Game::instance;
@@ -273,7 +269,6 @@ void EditorStage::renderInFront(std::string meshPath, std::string texPath) {
 	Vector3 spawnPos = RayPlaneCollision(Vector3(0,0,0), Vector3(0, 1, 0), rayOrigin, dir);
 	Matrix44 model;
 	model.translate(spawnPos.x, spawnPos.y, spawnPos.z);
-
 
 	EntityMesh* entity = new EntityMesh(NULL, NULL, shader, Vector4(1, 1, 1, 1), meshPath, texPath);
 	entity->model = model;
