@@ -20,8 +20,10 @@ extern std::vector<Texture*> platformTexs;
 extern std::vector<Matrix44> platformModels;
 
 extern EntityMesh* ground;
+extern EntityMesh* jetpack;
 
 std::vector<EntityMesh*> editorPlatforms;
+std::vector<EntityMesh*> decoration;
 extern EntityMesh* player;
 Matrix44 playerModel;
 
@@ -61,7 +63,12 @@ STAGE_ID PlayStage::GetId() {
 	return STAGE_ID::PLAY;
 };
 void PlayStage::render() {
-	ground->render(480.0f);
+	if (!readedDecoration) { 
+		readScene("decorationScene.txt", &decoration); 
+		readedDecoration = true;
+	}
+
+	ground->render(60.0f);
 	if (cameraLocked) {
 		Vector3 eye = player->model * Vector3(0.0f, 3.0f, -6.0f);
 		Vector3 center = player->model * Vector3(0.0f, 0.0f, 10.0f);
@@ -73,9 +80,17 @@ void PlayStage::render() {
 		EntityMesh* obj = staticObjects[i];
 		obj->render();
 	}
+	for (size_t i = 0; i < decoration.size(); i++)
+	{
+		EntityMesh* obj = decoration[i];
+		obj->render();
+	}
 	player->render();
 	player->model = playerModel;
-
+	jetpack->render();
+	Matrix44 jetpackTranslation;
+	jetpackTranslation.setTranslation(0, 0.65f, -0.5f);
+	jetpack->model = playerModel * jetpackTranslation;
 };
 void PlayStage::update(float seconds_elapsed) {
 
@@ -119,14 +134,14 @@ void PlayStage::update(float seconds_elapsed) {
 		}
 		// TODO 
 		if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && canJump){
-			jumpTime += seconds_elapsed;
-			if (jumpTime < 1.0f) {
+			jumpCounter -= seconds_elapsed;
+			if (jumpCounter > 0.0f) {
 				//playerVel = playerVel + (Vector3(0, 1, 0) * playerSpeed);
-				playerModel.translate(0.0f, 10.0f * seconds_elapsed, 0.0f); //JUMP
+				playerModel.translate(0.0f, 20.0f * seconds_elapsed, 0.0f); //JUMP
 			}
 			else {
 				canJump = false; 
-				jumpTime = 0;
+				jumpCounter = jumpTime;
 			}
 		}
 
@@ -153,13 +168,14 @@ void PlayStage::update(float seconds_elapsed) {
 		cameraMove(camera, speed);
 	}
 
-	float gravity = -6.0f * seconds_elapsed;    //implementació cutre de gravity
+	float gravity = -8.0f * seconds_elapsed;    //implementació cutre de gravity
 	if (player->getPosition().y > 0 && !Collision::testBelowPlayerColl(player)) {    //TODO
 		//playerVel = playerVel + (Vector3(0, 0, -1) * gravity);
 		playerModel.translate(0, gravity, 0);
 	}
 	else {
 		canJump = true;
+		jumpCounter = jumpTime;
 	}
 	
 	//Vector3 nextPos = player->getPosition() + playerVel;
@@ -176,6 +192,8 @@ STAGE_ID EditorStage::GetId() {
 	return STAGE_ID::EDITOR;
 };
 void EditorStage::render() {
+	ground->render(1000.0f);
+
 	for (int i = 0; i < editorPlatforms.size(); i++) {
 		editorPlatforms[i]->mesh->renderBounding(editorPlatforms[i]->model);
 		editorPlatforms[i]->render();
@@ -183,7 +201,7 @@ void EditorStage::render() {
 };
 void EditorStage::update(float seconds_elapsed) {
 
-	float speed = 0.5f;
+	float speed = 30.0f * seconds_elapsed;
 	Camera* camera = Game::instance->camera;
 	if (Input::mouse_state & SDL_BUTTON_LEFT) //is left button pressed?
 	{
@@ -233,31 +251,50 @@ void EditorStage::update(float seconds_elapsed) {
 			case 6:
 				renderInFront("data/decoration/SM_Env_Cactus_07_0.obj", "data/decoration/westernTex.png");
 				break;
+			case 7:
+				renderInFront("data/clouds/cloud-big_5.obj", "data/color-atlas-new.png");
+				break;
+			case 8:
+				renderInFront("data/clouds/cloud-fluffy_0.obj", "data/color-atlas-new.png");
+				break;
+			case 9:
+				renderInFront("data/clouds/cloud-long_4.obj", "data/color-atlas-new.png");
+				break;
+			case 10:
+				renderInFront("data/clouds/cloud-small_2.obj", "data/color-atlas-new.png");
+				break;
+			case 11:
+				renderInFront("data/clouds/cloud-triangle_3.obj", "data/color-atlas-new.png");
+				break;
 			}
 		}
 	}
 
 	if (Input::wasKeyPressed(SDL_SCANCODE_F)) {
 		if (!mode) objectNum = (objectNum + 1) % 4;
-		else decorationNum = (decorationNum + 1) % 7;
+		else decorationNum = (decorationNum + 1) % 12;
 	}
 	if (Input::wasKeyPressed(SDL_SCANCODE_1)) mode = !mode;
 
-	if (Input::wasKeyPressed(SDL_SCANCODE_T)) saveScene("editorScene");
-	if (Input::wasKeyPressed(SDL_SCANCODE_R)) readScene("editorScene",staticObjects);
+	if (Input::wasKeyPressed(SDL_SCANCODE_T) && !mode) saveScene("editorScene.txt");
+	else if (Input::wasKeyPressed(SDL_SCANCODE_T) && mode) saveScene("decorationScene.txt");
+	if (Input::wasKeyPressed(SDL_SCANCODE_R) && !mode) readScene("editorScene.txt", &staticObjects);
+	else if (Input::wasKeyPressed(SDL_SCANCODE_R) && mode) readScene("decorationScene.txt", &decoration);
+
 
 	if (Input::wasKeyPressed(SDL_SCANCODE_K)) selectObject();
 
-	if (Input::wasKeyPressed(SDL_SCANCODE_X) && selected != NULL) selected->model.rotate(10 * DEG2RAD, Vector3(0, 1, 0));
-	if (Input::wasKeyPressed(SDL_SCANCODE_Z) && selected != NULL) selected->model.rotate(-10 * DEG2RAD, Vector3(0, 1, 0));
+	float rotateSpeed = 100.0f * seconds_elapsed;
+	if (Input::isKeyPressed(SDL_SCANCODE_X) && selected != NULL) selected->model.rotate(rotateSpeed * DEG2RAD, Vector3(0, 1, 0));
+	if (Input::isKeyPressed(SDL_SCANCODE_Z) && selected != NULL) selected->model.rotate(-rotateSpeed * DEG2RAD, Vector3(0, 1, 0));
 
-	if (Input::isKeyPressed(SDL_SCANCODE_UP) && selected != NULL) selected->model.translate(0, 0, 0.5);
-	if (Input::isKeyPressed(SDL_SCANCODE_DOWN) && selected != NULL) selected->model.translate(0, 0, -0.5);
-	if (Input::isKeyPressed(SDL_SCANCODE_LEFT) && selected != NULL) selected->model.translate(0.5,0,0);
-	if (Input::isKeyPressed(SDL_SCANCODE_RIGHT) && selected != NULL) selected->model.translate(-0.5, 0, 0);
-	if (Input::isKeyPressed(SDL_SCANCODE_M) && selected != NULL) selected->model.translate(0, 0.5, 0);
-	if (Input::isKeyPressed(SDL_SCANCODE_N) && selected != NULL) selected->model.translate(0, -0.5, 0);
-
+	float objectMoveSpeed = 20.0f * seconds_elapsed;
+	if (Input::isKeyPressed(SDL_SCANCODE_UP) && selected != NULL) selected->model.translate(0, 0, objectMoveSpeed);
+	if (Input::isKeyPressed(SDL_SCANCODE_DOWN) && selected != NULL) selected->model.translate(0, 0, -objectMoveSpeed);
+	if (Input::isKeyPressed(SDL_SCANCODE_LEFT) && selected != NULL) selected->model.translate(objectMoveSpeed,0,0);
+	if (Input::isKeyPressed(SDL_SCANCODE_RIGHT) && selected != NULL) selected->model.translate(-objectMoveSpeed, 0, 0);
+	if (Input::isKeyPressed(SDL_SCANCODE_M) && selected != NULL) selected->model.translate(0, objectMoveSpeed, 0);
+	if (Input::isKeyPressed(SDL_SCANCODE_N) && selected != NULL && selected->getPosition().y > 0.1f) selected->model.translate(0, -objectMoveSpeed, 0);
 };
 void EditorStage::onKeyDown(SDL_KeyboardEvent event) { 
 	switch (event.keysym.sym) {
@@ -283,64 +320,6 @@ void EditorStage::renderInFront(std::string meshPath, std::string texPath) {
 }
 void EditorStage::selectObject() {
 	selected = Collision::RayPick(Game::instance->camera);
-}
-void EditorStage::saveScene(const char* fileName) {
-	std::ofstream myfile;
-	printf("\nCreating file to save the actual editor scene...\n");
-	myfile.open(fileName);
-	myfile << editorPlatforms.size() << "\n";
-	for (size_t i = 0; i < editorPlatforms.size(); i++)
-	{
-		EntityMesh* platform = editorPlatforms[i];
-		Matrix44 m = platform->model;
-		
-		for (int j = 0; j < 16; j++)  //print the model to the file
-		{
-			myfile << m.m[j] << ", ";
-		}
-
-		myfile << "\n" << platform->meshPath << "\n";
-		myfile << platform->texPath  << "\n";
-	}
-
-	myfile.close();
-}
-void EditorStage::readScene(const char* fileName, std::vector<EntityMesh*> vector) {
-	staticObjects.clear();
-
-	std::string line;
-	std::ifstream myfile;
-	Matrix44 model;
-	std::string meshPath;
-	std::string texPath;
-	printf("\nOpening file to charge the saved editor scene...\n");
-	myfile.open(fileName);
-	if (myfile.is_open())
-	{
-		std::getline(myfile, line);
-		int numObjects = std::stoi(line);
-		for (size_t i = 0; i < numObjects; i++)
-		{
-			for (int j = 0; j < 16; j++) {
-				std::getline(myfile, line, ',');
-				std::cout << "Element of the model : "<< line << "\n"; 
-				model.m[j] = std::atof(line.c_str());
-			}
-			std::getline(myfile, line);
-			std::getline(myfile, line);
-			std::cout << "MeshPath: " << line << "\n";
-			meshPath = line;
-			std::getline(myfile, line);
-			std::cout << "TexPath: " << line << "\n";
-			texPath = line;
-			
-			EntityMesh* object = new EntityMesh(NULL, NULL, shader, Vector4(1,1,1,1), meshPath, texPath);
-			object->model = model;
-			vector.push_back(object);
-		}
-		myfile.close();
-	}
-	else std::cout << "\n[!]Unable to open file";
 }
 
 		
@@ -384,6 +363,63 @@ void cameraMove(Camera* camera, float speed) {
 	if (Input::isKeyPressed(SDL_SCANCODE_E)) camera->move(Vector3(0.0f, -1.0f, 0.0f) * speed);
 	if (Input::isKeyPressed(SDL_SCANCODE_Q)) camera->move(Vector3(0.0f, 1.0f, 0.0f) * speed);
 }
+void saveScene(const char* fileName) {
+	std::ofstream myfile;
+	printf("\nCreating file to save the actual editor scene...\n");
+	myfile.open(fileName);
+	myfile << editorPlatforms.size() << "\n";
+	for (size_t i = 0; i < editorPlatforms.size(); i++)
+	{
+		EntityMesh* platform = editorPlatforms[i];
+		Matrix44 m = platform->model;
 
+		for (int j = 0; j < 16; j++)  //print the model to the file
+		{
+			myfile << m.m[j] << ", ";
+		}
+
+		myfile << "\n" << platform->meshPath << "\n";
+		myfile << platform->texPath << "\n";
+	}
+
+	myfile.close();
+}
+void readScene(const char* fileName, std::vector<EntityMesh*>* vector) {
+	vector->clear();
+
+	std::string line;
+	std::ifstream myfile;
+	Matrix44 model;
+	std::string meshPath;
+	std::string texPath;
+	printf("\nOpening file to charge the saved editor scene...\n");
+	myfile.open(fileName);
+	if (myfile.is_open())
+	{
+		std::getline(myfile, line);
+		int numObjects = std::stoi(line);
+		for (size_t i = 0; i < numObjects; i++)
+		{
+			for (int j = 0; j < 16; j++) {
+				std::getline(myfile, line, ',');
+				std::cout << "Element of the model : " << line << "\n";
+				model.m[j] = std::atof(line.c_str());
+			}
+			std::getline(myfile, line);
+			std::getline(myfile, line);
+			std::cout << "MeshPath: " << line << "\n";
+			meshPath = line;
+			std::getline(myfile, line);
+			std::cout << "TexPath: " << line << "\n";
+			texPath = line;
+
+			EntityMesh* object = new EntityMesh(NULL, NULL, shader, Vector4(1, 1, 1, 1), meshPath, texPath);
+			object->model = model;
+			vector->push_back(object);
+		}
+		myfile.close();
+	}
+	else std::cout << "\n[!]Unable to open file";
+}
 
 

@@ -18,6 +18,8 @@ extern STAGE_ID currentStage;
 
 EntityMesh* ground;
 
+EntityMesh* jetpack;
+
 std::vector<EntityMesh*> staticObjects;
 Mesh* mesh = NULL;
 Texture* texture = NULL;
@@ -62,15 +64,17 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	InitStages();
 
 	//loading Mesh from Mesh Manager
-	playerMesh = Mesh::Get("data/Chr_Adventure_Viking_01_0.obj");
+	playerMesh = Mesh::Get("data/Chr_Dungeon_Skeleton_01_34.obj");
 	playerTex = Texture::Get("data/PolygonMinis_Texture.png");
 
 	
 	// example of shader loading using the shaders manager
 	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
 	
+	jetpack = new EntityMesh(Mesh::Get("data/Jetpack.obj"), Texture::Get("data/Jetpack_BaseColor.png"), shader, Vector4(1,1,1,1));
 	ground = new EntityMesh(Mesh::Get("data/platforms/ground.obj"), Texture::Get("data/platforms/ground.png"), shader, Vector4(1,1,1,1));
-	staticObjects.reserve(40);
+
+	staticObjects.reserve(50);
 	staticObjects.push_back(new EntityMesh(Mesh::Get("data/sky.ASE"), Texture::Get("data/sky.tga"), shader, Vector4(1, 1, 1, 1)));
 
 	player = new EntityMesh(playerMesh, playerTex, shader, Vector4(1, 1, 1, 1));
@@ -159,7 +163,7 @@ void Game::render(void)
 	//RenderIslands();
 
 	//Draw the floor grid
-	drawGrid();
+	//drawGrid();
 
 	//render the FPS, Draw Calls, etc
 	drawText(2, 2, getGPUStats(), Vector3(1, 1, 1), 2);
@@ -189,7 +193,6 @@ void Game::onKeyDown( SDL_KeyboardEvent event )
 	{
 		case SDLK_ESCAPE: must_exit = true; break; //ESC key, kill the app
 		case SDLK_F1: Shader::ReloadAll(); break; 
-		case SDLK_h: Collision::RayPick(camera);   // TODO Temporary collision tester 
 	}
 }
 

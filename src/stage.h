@@ -42,7 +42,10 @@ public:
 
 class PlayStage : public Stage {
 public:
-	float jumpTime = 0;
+	bool readedDecoration = false;
+
+	float jumpCounter = 0;
+	const float jumpTime = 2.5f;
 	bool canJump = true;
 
 	STAGE_ID GetId();
@@ -63,8 +66,6 @@ public:
 	void onKeyDown(SDL_KeyboardEvent event);
 	void renderInFront(std::string meshPath, std::string texPath);
 	void selectObject();
-	void saveScene(const char* fileName);
-	void readScene(const char* fileName, std::vector<EntityMesh*> vector);
 };
 
 class EndStage : public Stage {
@@ -99,4 +100,6 @@ struct sPlayer {
 
 
 void GroundRendering();
+void saveScene(const char* fileName);
+void readScene(const char* fileName, std::vector<EntityMesh*>* vector);
 #endif 

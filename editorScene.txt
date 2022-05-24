@@ -1,0 +1,10 @@
+3
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.174269, 0, 21.0625, 1, 
+data/platforms/blockSnow.obj
+data/platforms/blockSnow.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -8.90477, -2.38419e-07, 0.611883, 1, 
+data/platforms/blockSnow.obj
+data/platforms/blockSnow.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.1068, 0, -2.92315, 1, 
+data/platforms/blockSnow.obj
+data/platforms/blockSnow.png

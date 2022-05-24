@@ -1,0 +1,181 @@
+60
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3.84908, 0, 11.0992, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -11.8244, 0, 24.8668, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -5.56711, 0, 6.69848, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 16.9381, -4.76837e-07, 27.5099, 1, 
+data/decoration/SM_Env_Cactus_13_53.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 9.61044, 0, 3.78485, 1, 
+data/decoration/SM_Env_Cactus_13_53.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.05434, 0, -0.838501, 1, 
+data/decoration/SM_Env_Cactus_13_53.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -1.48521, 4.76837e-07, -4.86594, 1, 
+data/decoration/SM_Env_Cactus_13_53.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -5.02407, -4.76837e-07, 29.1729, 1, 
+data/decoration/SM_Env_Cactus_13_53.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -9.95607, 0, 1.47626, 1, 
+data/decoration/SM_Env_Cactus_12_64.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -25.2244, 0, 16.5103, 1, 
+data/decoration/SM_Env_Cactus_12_64.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -19.13, 0, 58.9316, 1, 
+data/decoration/SM_Env_Cactus_12_64.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -19.1026, 0, 3.39714, 1, 
+data/decoration/SM_Env_Cactus_12_64.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -14.0118, 0, 11.3189, 1, 
+data/decoration/SM_Env_Cactus_12_64.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 35.2964, 0, 88.4965, 1, 
+data/decoration/SM_Env_Cactus_12_64.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.754274, 0, 24.4712, 1, 
+data/decoration/SM_Env_Cactus_11_63.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -4.64692, 0, -1.58216, 1, 
+data/decoration/SM_Env_Cactus_11_63.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 23.7684, 0, 11.2621, 1, 
+data/decoration/SM_Env_Cactus_11_63.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.47479, 0, -9.22475, 1, 
+data/decoration/SM_Env_Cactus_11_63.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 118.603, 0, 96.9386, 1, 
+data/decoration/SM_Env_Cactus_11_63.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 40.3059, 0, 15.9865, 1, 
+data/decoration/SM_Env_Cactus_11_63.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 25.082, 0, 24.0101, 1, 
+data/decoration/SM_Env_Cactus_11_63.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -18.9015, 0, -13.4112, 1, 
+data/decoration/SM_Env_Cactus_11_63.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -24.0973, 0, -12.2066, 1, 
+data/decoration/SM_Env_Cactus_11_63.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -24.6053, 0, -4.82542, 1, 
+data/decoration/SM_Env_Cactus_11_63.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -9.5933, 0, -15.7125, 1, 
+data/decoration/SM_Env_Cactus_11_63.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -17.5719, 0, -30.7542, 1, 
+data/decoration/SM_Env_Cactus_10_5.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -1.51634, 0, -27.7578, 1, 
+data/decoration/SM_Env_Cactus_10_5.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 32.7959, 0, -9.43024, 1, 
+data/decoration/SM_Env_Cactus_10_5.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -72.7183, 0, 128.044, 1, 
+data/decoration/SM_Env_Cactus_10_5.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -4.42141, 0, 156.306, 1, 
+data/decoration/SM_Env_Cactus_10_5.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -36.5596, 0, 1.76312, 1, 
+data/decoration/SM_Env_Cactus_09_61.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -7.25748, 0, 17.806, 1, 
+data/decoration/SM_Env_Cactus_07_0.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 40.2277, 0, 170.16, 1, 
+data/decoration/SM_Env_Cactus_07_0.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -10.1324, 0, -34.4678, 1, 
+data/decoration/SM_Env_Cactus_07_0.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -38.9693, 0, -27.6899, 1, 
+data/decoration/SM_Env_Cactus_07_0.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -30.0415, 21.0401, -12.4693, 1, 
+data/clouds/cloud-big_5.obj
+data/color-atlas-new.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 107.174, 28.3802, 111.011, 1, 
+data/clouds/cloud-big_5.obj
+data/color-atlas-new.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -44.5926, 34.4002, 105.938, 1, 
+data/clouds/cloud-fluffy_0.obj
+data/color-atlas-new.png
+0.489382, 0, -0.872069, 0, 0, 1, 0, 0, 0.872069, 0, 0.489382, 0, 28.2285, 21.8801, -6.57312, 1, 
+data/clouds/cloud-long_4.obj
+data/color-atlas-new.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 11.5205, 11.74, 45.0758, 1, 
+data/clouds/cloud-small_2.obj
+data/color-atlas-new.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -3.26611, 38.9604, 125.769, 1, 
+data/clouds/cloud-small_2.obj
+data/color-atlas-new.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.10623, 23.4201, 67.5798, 1, 
+data/clouds/cloud-triangle_3.obj
+data/color-atlas-new.png
+0.852641, 0, -0.522499, 0, 0, 1, 0, 0, 0.522499, 0, 0.852641, 0, -11.278, 25.4401, -18.864, 1, 
+data/clouds/cloud-triangle_3.obj
+data/color-atlas-new.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -34.2612, 0, -21.2215, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -75.5816, 0, 189.54, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -39.8045, 0, 96.5972, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -49.8768, 0, 1.37791, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 78.1082, 0, 42.4924, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 23.9215, 0, -19.7464, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 90.061, 0, 8.34078, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 55.7048, 0, -31.306, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 10.1252, 0, -47.798, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -40.4383, 0, -43.1928, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -68.2164, 0, 12.2159, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -92.0367, 0, 96.3835, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -4.78649, 0, 78.8604, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 19.7736, 0, 148.311, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 84.8092, 0, 136.468, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 44.0867, 0, -27.5849, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
+1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 30.423, 0, -50.8918, 1, 
+data/decoration/SM_Env_Cactus_14_74.obj
+data/decoration/westernTex.png
