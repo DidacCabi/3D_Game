@@ -20,7 +20,7 @@ public:
     Vector4 color;
 
     //methods overwritten 
-    void render();
+    void render(float tiling = 1.0f);
     void update(float dt);
 };
 

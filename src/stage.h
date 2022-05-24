@@ -62,9 +62,9 @@ public:
 	void update(float seconds_elapsed);
 	void onKeyDown(SDL_KeyboardEvent event);
 	void renderInFront(std::string meshPath, std::string texPath);
-	void EditorStage::selectObject();
-	void saveScene();
-	void readScene();
+	void selectObject();
+	void saveScene(const char* fileName);
+	void readScene(const char* fileName, std::vector<EntityMesh*> vector);
 };
 
 class EndStage : public Stage {
@@ -97,4 +97,6 @@ struct sPlayer {
 	
 };
 
+
+void GroundRendering();
 #endif 

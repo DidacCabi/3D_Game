@@ -17,7 +17,7 @@ public:
     Matrix44 model;
 
     //methods overwritten by derived classes 
-    virtual void render() = 0;
+    virtual void render(float tiling = 1.0f) = 0;
     virtual void update(float elapsed_time) = 0;
 
     //some useful methods...

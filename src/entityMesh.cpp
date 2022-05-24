@@ -20,7 +20,7 @@ EntityMesh::EntityMesh(Mesh* mesh, Texture* tex, Shader* shader, Vector4 color) 
     this->texture = tex;
 }
 
-void EntityMesh::render() {
+void EntityMesh::render(float tiling ) {
 
     assert(mesh != NULL, "mesh in RenderMesh was null");
     if (!shader) return;
@@ -33,6 +33,7 @@ void EntityMesh::render() {
     shader->enable();
     shader->setUniform("u_color", color);
     shader->setUniform("u_viewprojection", camera->viewprojection_matrix);
+    shader->setUniform("u_tex_tiling", tiling);
     if(texture != NULL) shader->setUniform("u_texture", texture, 0);
     shader->setUniform("u_time", time);
     shader->setUniform("u_model", model);

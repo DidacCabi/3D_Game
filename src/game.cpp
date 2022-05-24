@@ -16,6 +16,8 @@
 extern std::vector<Stage*> stages;
 extern STAGE_ID currentStage;
 
+EntityMesh* ground;
+
 std::vector<EntityMesh*> staticObjects;
 Mesh* mesh = NULL;
 Texture* texture = NULL;
@@ -66,7 +68,8 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	
 	// example of shader loading using the shaders manager
 	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
-
+	
+	ground = new EntityMesh(Mesh::Get("data/platforms/ground.obj"), Texture::Get("data/platforms/ground.png"), shader, Vector4(1,1,1,1));
 	staticObjects.reserve(40);
 	staticObjects.push_back(new EntityMesh(Mesh::Get("data/sky.ASE"), Texture::Get("data/sky.tga"), shader, Vector4(1, 1, 1, 1)));
 

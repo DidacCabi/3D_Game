@@ -19,6 +19,8 @@ extern std::vector<Mesh*> platformMeshes;
 extern std::vector<Texture*> platformTexs;
 extern std::vector<Matrix44> platformModels;
 
+extern EntityMesh* ground;
+
 std::vector<EntityMesh*> editorPlatforms;
 extern EntityMesh* player;
 Matrix44 playerModel;
@@ -59,6 +61,7 @@ STAGE_ID PlayStage::GetId() {
 	return STAGE_ID::PLAY;
 };
 void PlayStage::render() {
+	ground->render(480.0f);
 	if (cameraLocked) {
 		Vector3 eye = player->model * Vector3(0.0f, 3.0f, -6.0f);
 		Vector3 center = player->model * Vector3(0.0f, 0.0f, 10.0f);
@@ -200,7 +203,10 @@ void EditorStage::update(float seconds_elapsed) {
 				renderInFront("data/platforms/blockSnowCliff.obj", "data/platforms/blockSnowCliff.png");
 				break;
 			case 2:
-				renderInFront("data / platforms / blockRounded.obj", "data / platforms / blockRounded.png");
+				renderInFront("data/platforms/blockRounded.obj", "data/platforms/blockRounded.png");
+				break;
+			case 3:
+				renderInFront("data/platforms/tile-plain_sand_1.obj", "data/platforms/color-atlas-new.png");
 				break;
 			}
 		}
@@ -232,13 +238,13 @@ void EditorStage::update(float seconds_elapsed) {
 	}
 
 	if (Input::wasKeyPressed(SDL_SCANCODE_F)) {
-		if (!mode) objectNum = (objectNum + 1) % 3;
+		if (!mode) objectNum = (objectNum + 1) % 4;
 		else decorationNum = (decorationNum + 1) % 7;
 	}
 	if (Input::wasKeyPressed(SDL_SCANCODE_1)) mode = !mode;
 
-	if (Input::wasKeyPressed(SDL_SCANCODE_T)) saveScene();
-	if (Input::wasKeyPressed(SDL_SCANCODE_R)) readScene();
+	if (Input::wasKeyPressed(SDL_SCANCODE_T)) saveScene("editorScene");
+	if (Input::wasKeyPressed(SDL_SCANCODE_R)) readScene("editorScene",staticObjects);
 
 	if (Input::wasKeyPressed(SDL_SCANCODE_K)) selectObject();
 
@@ -278,10 +284,10 @@ void EditorStage::renderInFront(std::string meshPath, std::string texPath) {
 void EditorStage::selectObject() {
 	selected = Collision::RayPick(Game::instance->camera);
 }
-void EditorStage::saveScene() {
+void EditorStage::saveScene(const char* fileName) {
 	std::ofstream myfile;
 	printf("\nCreating file to save the actual editor scene...\n");
-	myfile.open("editorScene1.txt");
+	myfile.open(fileName);
 	myfile << editorPlatforms.size() << "\n";
 	for (size_t i = 0; i < editorPlatforms.size(); i++)
 	{
@@ -299,14 +305,16 @@ void EditorStage::saveScene() {
 
 	myfile.close();
 }
-void EditorStage::readScene() {
+void EditorStage::readScene(const char* fileName, std::vector<EntityMesh*> vector) {
+	staticObjects.clear();
+
 	std::string line;
 	std::ifstream myfile;
 	Matrix44 model;
 	std::string meshPath;
 	std::string texPath;
 	printf("\nOpening file to charge the saved editor scene...\n");
-	myfile.open("editorScene1.txt");
+	myfile.open(fileName);
 	if (myfile.is_open())
 	{
 		std::getline(myfile, line);
@@ -328,11 +336,10 @@ void EditorStage::readScene() {
 			
 			EntityMesh* object = new EntityMesh(NULL, NULL, shader, Vector4(1,1,1,1), meshPath, texPath);
 			object->model = model;
-			staticObjects.push_back(object);
+			vector.push_back(object);
 		}
 		myfile.close();
 	}
-
 	else std::cout << "\n[!]Unable to open file";
 }
 
@@ -377,3 +384,6 @@ void cameraMove(Camera* camera, float speed) {
 	if (Input::isKeyPressed(SDL_SCANCODE_E)) camera->move(Vector3(0.0f, -1.0f, 0.0f) * speed);
 	if (Input::isKeyPressed(SDL_SCANCODE_Q)) camera->move(Vector3(0.0f, 1.0f, 0.0f) * speed);
 }
+
+
+
