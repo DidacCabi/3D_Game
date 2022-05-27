@@ -44,6 +44,11 @@ class PlayStage : public Stage {
 public:
 	bool readedDecoration = false;
 
+	struct sPlayer {
+		Vector3 pos;
+		float yaw;
+	};
+	sPlayer playerStruct;	
 	float jumpCounter = 0;
 	const float jumpTime = 2.5f;
 	bool canJump = true;

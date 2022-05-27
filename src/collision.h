@@ -8,7 +8,7 @@ class Collision {
 public:
 
 	static EntityMesh* RayPick(Camera* cam);
-	static void testSidePlayerColl(EntityMesh* player, Vector3 nextPos, float elapsed_time);
+	static Vector3 testSidePlayerColl(Vector3 playerPos, Vector3 nextPos, float elapsed_time);
 	static bool testBelowPlayerColl(EntityMesh* player);
 
 };

@@ -86,16 +86,19 @@ void PlayStage::render() {
 		obj->render();
 	}
 	player->render();
-	player->model = playerModel;
+	player->model = playerModel; 
 	jetpack->render();
-	Matrix44 jetpackTranslation;
-	jetpackTranslation.setTranslation(0, 0.65f, -0.5f);
-	jetpack->model = playerModel * jetpackTranslation;
 };
 void PlayStage::update(float seconds_elapsed) {
 
 	float speed = seconds_elapsed * 50.0f; //mouse_speed, the speed is defined by the seconds_elapsed so it goes constant
+	Matrix44 playerRotation;
+	playerRotation.rotate(playerStruct.yaw * DEG2RAD, Vector3(0,1,0));
 	Vector3 playerVel;
+	Vector3 forward = playerRotation.rotateVector(Vector3(0,0,-1));
+	Vector3 right = playerRotation.rotateVector(Vector3(1,0,0));
+	Vector3 up = playerRotation.rotateVector(Vector3(0,1,0));
+	
 
 	Camera* camera = Game::instance->camera;
 	//mouse input to rotate the cam
@@ -112,32 +115,28 @@ void PlayStage::update(float seconds_elapsed) {
 	if (cameraLocked) {
 		float playerSpeed = 10.0f * seconds_elapsed;
 		if (Input::isKeyPressed(SDL_SCANCODE_W)) {
-			//playerVel = playerVel + (Vector3(0,0,1) * playerSpeed);
-			playerModel.translate(0.0f, 0.0f, playerSpeed);
+			playerVel = playerVel - (forward * playerSpeed);
 			direction = 0;
 		}
 		if (Input::isKeyPressed(SDL_SCANCODE_S)) { 
-			//playerVel = playerVel + (Vector3(0, 0, -1) * playerSpeed);
-			playerModel.translate(0.0f, 0.0f, -playerSpeed);
+			playerVel = playerVel + (forward * playerSpeed);
 			direction = 1;
 		}
 	
 		if (Input::isKeyPressed(SDL_SCANCODE_A)) {
-			//playerVel = playerVel + (Vector3(1, 0, 0) * playerSpeed);
-			playerModel.translate(playerSpeed, 0.0f, 0.0f);
+			playerVel = playerVel + (right * playerSpeed);
 			direction = 2;
 		}
 		if (Input::isKeyPressed(SDL_SCANCODE_D)) { 
-			//playerVel = playerVel + (Vector3(-1, 0, 0) * playerSpeed);
-			playerModel.translate(-playerSpeed, 0.0f, 0.0f);
+			playerVel = playerVel - (right * playerSpeed);
 			direction = 3;
 		}
 		// TODO 
 		if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && canJump){
 			jumpCounter -= seconds_elapsed;
 			if (jumpCounter > 0.0f) {
-				//playerVel = playerVel + (Vector3(0, 1, 0) * playerSpeed);
-				playerModel.translate(0.0f, 20.0f * seconds_elapsed, 0.0f); //JUMP
+				playerVel = playerVel + (up * playerSpeed);
+				//playerModel.translate(0.0f, 20.0f * seconds_elapsed, 0.0f); //JUMP
 			}
 			else {
 				canJump = false; 
@@ -169,21 +168,24 @@ void PlayStage::update(float seconds_elapsed) {
 	}
 
 	float gravity = -8.0f * seconds_elapsed;    //implementació cutre de gravity
-	if (player->getPosition().y > 0 && !Collision::testBelowPlayerColl(player)) {    //TODO
-		//playerVel = playerVel + (Vector3(0, 0, -1) * gravity);
-		playerModel.translate(0, gravity, 0);
+	if (playerStruct.pos.y > 0 && !Collision::testBelowPlayerColl(player)) {    //TODO
+		playerVel = playerVel - (up * gravity);
+		//playerModel.translate(0, gravity, 0);
 	}
 	else {
 		canJump = true;
 		jumpCounter = jumpTime;
 	}
 	
-	//Vector3 nextPos = player->getPosition() + playerVel;
-	//Collision::testSidePlayerColl(player, nextPos, seconds_elapsed);
+	Vector3 nextPos = playerStruct.pos + playerVel;
+	nextPos = Collision::testSidePlayerColl(playerStruct.pos, nextPos, seconds_elapsed);
+	playerStruct.pos = nextPos;
 
-	//player->model.translate(nextPos.x, nextPos.y, nextPos.z);
+	player->model.translate(playerStruct.pos.x, playerStruct.pos.y, playerStruct.pos.z);
+	player->model.rotate(playerStruct.yaw * DEG2RAD, Vector3(0,1,0));
 
-
+	Matrix44 jetpackTranslation;
+	jetpack->model.setTranslation(playerStruct.pos.x, playerStruct.pos.y + 0.65f, playerStruct.pos.z - 0.5f);
 };
 
 
