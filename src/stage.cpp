@@ -167,7 +167,7 @@ void PlayStage::update(float seconds_elapsed) {
 		cameraMove(camera, speed);
 	}
 
-	float gravity = -8.0f * seconds_elapsed;    //implementació cutre de gravity
+	float gravity = 3.0f * seconds_elapsed;    
 	if (playerStruct.pos.y > 0 && !Collision::testBelowPlayerColl(player)) {    //TODO
 		playerVel = playerVel - (up * gravity);
 		//playerModel.translate(0, gravity, 0);
