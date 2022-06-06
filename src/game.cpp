@@ -25,6 +25,7 @@ std::vector<EntityMesh*> staticObjects;
 Mesh* mesh = NULL;
 Texture* texture = NULL;
 Shader* shader = NULL;
+Shader* animShader = NULL;
 
 EntityMesh* player;
 Mesh* playerMesh = NULL;
@@ -32,7 +33,10 @@ Texture* playerTex = NULL;
 
 bool cameraLocked = true;
 
-Animation* anim = NULL;
+Animation* dance;
+Animation* walk;
+Animation* idle;
+
 float angle = 0;
 float mouse_speed = 100.0f;
 FBO* fbo = NULL;
@@ -66,19 +70,23 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 
 	//loading Mesh from Mesh Manager
 	playerMesh = Mesh::Get("data/Chr_Dungeon_Skeleton_01_34.obj");
+	//playerMesh = Mesh::Get("data/animations/dance.mesh");
 	playerTex = Texture::Get("data/PolygonMinis_Texture.png");
-
+	dance = Animation::Get("data/animations/dance.skanim");
+	walk = Animation::Get("data/animations/walk.skanim");
+	idle = Animation::Get("data/animations/idle.skanim");
 	
 	// example of shader loading using the shaders manager
 	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
-	
+	animShader = Shader::Get("data/shaders/skinning.vs", "data/shaders/texture.fs");
+
 	jetpack = new EntityMesh(Mesh::Get("data/Jetpack.obj"), Texture::Get("data/Jetpack_BaseColor.png"), shader, Vector4(1,1,1,1));
 	ground = new EntityMesh(Mesh::Get("data/platforms/ground.obj"), Texture::Get("data/platforms/ground.png"), shader, Vector4(1,1,1,1));
 
 	staticObjects.reserve(50);
 	staticObjects.push_back(new EntityMesh(Mesh::Get("data/sky.ASE"), Texture::Get("data/sky.tga"), shader, Vector4(1, 1, 1, 1)));
 
-	player = new EntityMesh(playerMesh, playerTex, shader, Vector4(1, 1, 1, 1));
+	player = new EntityMesh(playerMesh, playerTex, shader, Vector4(1, 1, 1, 1), "", "", NULL);
 
 	//hide the cursor
 	SDL_ShowCursor(!mouse_locked); //hide or show the mouse

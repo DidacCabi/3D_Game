@@ -8,6 +8,7 @@
 #include "mesh.h"
 #include "texture.h"
 #include "entityMesh.h"
+#include "animation.h"
 
 enum STAGE_ID {
 	INTRO,
@@ -17,8 +18,11 @@ enum STAGE_ID {
 	END
 };
 
+
 class Stage {
 public:
+	
+	int level = 0;
 
 	virtual STAGE_ID GetId() = 0;
 	virtual void render() = 0;
@@ -52,6 +56,7 @@ public:
 	float jumpCounter = 0;
 	const float jumpTime = 2.5f;
 	bool canJump = true;
+	bool isJumping = false;
 
 	STAGE_ID GetId();
 	void render();
@@ -64,6 +69,8 @@ public:
 	int decorationNum = 0;
 	bool mode = false;   //switch between decoration and platforms mode
 	EntityMesh* selected = NULL;
+
+	int objectsPerLevel[5] = {2,3,4,2,5};
 
 	STAGE_ID GetId();
 	void render();
@@ -107,4 +114,6 @@ struct sPlayer {
 void GroundRendering();
 void saveScene(const char* fileName);
 void readScene(const char* fileName, std::vector<EntityMesh*>* vector);
+
+void loadLevel(int level);
 #endif 

@@ -22,6 +22,10 @@ extern std::vector<Matrix44> platformModels;
 extern EntityMesh* ground;
 extern EntityMesh* jetpack;
 
+extern Animation* idle;
+extern Animation* walk;
+extern Animation* dance;
+
 std::vector<EntityMesh*> editorPlatforms;
 std::vector<EntityMesh*> decoration;
 extern EntityMesh* player;
@@ -63,12 +67,12 @@ STAGE_ID PlayStage::GetId() {
 	return STAGE_ID::PLAY;
 };
 void PlayStage::render() {
-	if (!readedDecoration) { 
+	if (!readedDecoration) {   //decoration
 		readScene("decorationScene.txt", &decoration); 
 		readedDecoration = true;
 	}
+	ground->render(60.0f); //ground
 
-	ground->render(60.0f);
 	if (cameraLocked) {
 		Vector3 eye = player->model * Vector3(0.0f, 3.0f, -6.0f);
 		Vector3 center = player->model * Vector3(0.0f, 0.0f, 10.0f);
@@ -85,12 +89,15 @@ void PlayStage::render() {
 		EntityMesh* obj = decoration[i];
 		obj->render();
 	}
+
+	loadLevel(level);
+
+	//player->model.scale(0.01f, 0.01f, 0.01f);
 	player->render();
-	player->model = playerModel; 
 	jetpack->render();
 };
 void PlayStage::update(float seconds_elapsed) {
-
+	isJumping = false;
 	float speed = seconds_elapsed * 50.0f; //mouse_speed, the speed is defined by the seconds_elapsed so it goes constant
 	Matrix44 playerRotation;
 	playerRotation.rotate(playerStruct.yaw * DEG2RAD, Vector3(0,1,0));
@@ -136,7 +143,7 @@ void PlayStage::update(float seconds_elapsed) {
 			jumpCounter -= seconds_elapsed;
 			if (jumpCounter > 0.0f) {
 				playerVel = playerVel + (up * playerSpeed);
-				//playerModel.translate(0.0f, 20.0f * seconds_elapsed, 0.0f); //JUMP
+				isJumping = true;
 			}
 			else {
 				canJump = false; 
@@ -167,25 +174,33 @@ void PlayStage::update(float seconds_elapsed) {
 		cameraMove(camera, speed);
 	}
 
-	float gravity = 3.0f * seconds_elapsed;    
-	if (playerStruct.pos.y > 0 && !Collision::testBelowPlayerColl(player)) {    //TODO
+	std::cout << "jump timer: " << jumpCounter << std::endl;
+
+	//std::cout << "col with ground: " << Collision::testBelowPlayerColl(player) << std::endl;
+	float gravity = 9.0f * seconds_elapsed;    
+	if (playerStruct.pos.y > 0 && !Collision::testBelowPlayerColl(player) && !isJumping) {    //TODO
 		playerVel = playerVel - (up * gravity);
-		//playerModel.translate(0, gravity, 0);
 	}
 	else {
 		canJump = true;
+	}
+
+	if (playerStruct.pos.y < 0.2f || Collision::testBelowPlayerColl(player)) { 
+		canJump = true; 
 		jumpCounter = jumpTime;
 	}
 	
 	Vector3 nextPos = playerStruct.pos + playerVel;
-	nextPos = Collision::testSidePlayerColl(playerStruct.pos, nextPos, seconds_elapsed);
+	if(!Collision::testBelowPlayerColl(player)) nextPos = Collision::testSidePlayerColl(playerStruct.pos, nextPos, seconds_elapsed);
 	playerStruct.pos = nextPos;
-
-	player->model.translate(playerStruct.pos.x, playerStruct.pos.y, playerStruct.pos.z);
+	
+	player->model.setTranslation(playerStruct.pos.x, playerStruct.pos.y, playerStruct.pos.z);
 	player->model.rotate(playerStruct.yaw * DEG2RAD, Vector3(0,1,0));
 
-	Matrix44 jetpackTranslation;
-	jetpack->model.setTranslation(playerStruct.pos.x, playerStruct.pos.y + 0.65f, playerStruct.pos.z - 0.5f);
+	//if (playerVel.x != 0.0f || playerVel.y != 0.0f || playerVel.z != 0.0f) player->anim = walk;  //player animations
+	//else player->anim = idle;
+
+	jetpack->model.setTranslation(playerStruct.pos.x, playerStruct.pos.y + 0.73f, playerStruct.pos.z - 0.3f);
 };
 
 
@@ -194,7 +209,7 @@ STAGE_ID EditorStage::GetId() {
 	return STAGE_ID::EDITOR;
 };
 void EditorStage::render() {
-	ground->render(1000.0f);
+	ground->render(60.0f);
 
 	for (int i = 0; i < editorPlatforms.size(); i++) {
 		editorPlatforms[i]->mesh->renderBounding(editorPlatforms[i]->model);
@@ -315,7 +330,7 @@ void EditorStage::renderInFront(std::string meshPath, std::string texPath) {
 	Matrix44 model;
 	model.translate(spawnPos.x, spawnPos.y, spawnPos.z);
 
-	EntityMesh* entity = new EntityMesh(NULL, NULL, shader, Vector4(1, 1, 1, 1), meshPath, texPath);
+	EntityMesh* entity = new EntityMesh(NULL, NULL, shader, Vector4(1, 1, 1, 1), meshPath, texPath, NULL);
 	entity->model = model;
 	editorPlatforms.reserve(1);
 	editorPlatforms.push_back(entity);
@@ -415,7 +430,7 @@ void readScene(const char* fileName, std::vector<EntityMesh*>* vector) {
 			std::cout << "TexPath: " << line << "\n";
 			texPath = line;
 
-			EntityMesh* object = new EntityMesh(NULL, NULL, shader, Vector4(1, 1, 1, 1), meshPath, texPath);
+			EntityMesh* object = new EntityMesh(NULL, NULL, shader, Vector4(1, 1, 1, 1), meshPath, texPath, NULL);
 			object->model = model;
 			vector->push_back(object);
 		}
@@ -425,3 +440,16 @@ void readScene(const char* fileName, std::vector<EntityMesh*>* vector) {
 }
 
 
+void loadLevel(int level) {
+	Vector3 coinPos[5] = {
+		Vector3(10,10,30),
+		Vector3(10,10,10),
+		Vector3(10,10,10),
+		Vector3(10,10,10),
+		Vector3(10,10,10)
+	};
+	EntityMesh* coin = new EntityMesh(NULL, NULL, shader, Vector4(1, 1, 1, 1), "data/decoration/coin.obj", "data/decoration/coin.png", NULL);
+
+	coin->model.setTranslationVec(coinPos[level]);
+	coin->render();
+}

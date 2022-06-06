@@ -28,7 +28,7 @@ Vector3 Collision::testSidePlayerColl(Vector3 playerPos, Vector3 nextPos, float 
 	{
 		Vector3 coll, collnorm;
 		EntityMesh* platform = editorPlatforms[i];
-		if (!platform->mesh->testSphereCollision(platform->model, playerPos, 1.0f, coll, collnorm)) continue;
+		if (!platform->mesh->testSphereCollision(platform->model, playerPos, 0.2f, coll, collnorm)) continue;
 		Vector3 pushAway = normalize(coll - playerPos) * elapsed_time;
 		nextPos = playerPos - pushAway;
 		return nextPos;
@@ -45,7 +45,7 @@ bool Collision::testBelowPlayerColl(EntityMesh* player) {
 		Vector3 coll, collnorm;
 		EntityMesh* platform = editorPlatforms[i];
 		Vector3 playerPos = player->getPosition();
-		if (platform->mesh->testRayCollision(platform->model, playerPos, Vector3(0, -1, 0), coll, collnorm, 0.2f, true)) return true;
+		if (platform->mesh->testRayCollision(platform->model, playerPos, Vector3(0, -1, 0), coll, collnorm, 0.21f, true)) return true;
 	}
 	return false; 
 

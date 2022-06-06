@@ -1,9 +1,10 @@
 #include "entityMesh.h"
 
-EntityMesh::EntityMesh(Mesh* mesh, Texture* tex, Shader * shader, Vector4 color = Vector4(1,1,1,1), std::string meshPath = "", std::string texPath = "") {
+EntityMesh::EntityMesh(Mesh* mesh, Texture* tex, Shader * shader, Vector4 color = Vector4(1,1,1,1), std::string meshPath = "", std::string texPath = "", Animation* anim = NULL) {
+    if (anim != NULL) this->anim = anim;
     if (mesh == NULL) this->mesh = Mesh::Get(meshPath.c_str());
     else this->mesh = mesh;
-    this->model = model;
+    this->model = Matrix44();
     this->color = color;
     this->shader = shader;
     if (tex == NULL) this->texture = Texture::Get(texPath.c_str());
@@ -39,7 +40,13 @@ void EntityMesh::render(float tiling ) {
     shader->setUniform("u_model", model);
 
     //render the mesh using the shader
-    mesh->render(GL_TRIANGLES);
+    if (anim != NULL) {
+        mesh->renderAnimated(GL_TRIANGLES, &anim->skeleton); 
+        anim->assignTime(Game::instance->time);
+    }
+    else { 
+        mesh->render(GL_TRIANGLES); 
+    }
 
     //disable the shader after finishing rendering
     shader->disable();
