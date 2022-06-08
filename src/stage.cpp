@@ -21,6 +21,7 @@ extern std::vector<EntityMesh*> staticObjects;
 extern EntityMesh* ground;
 extern EntityMesh* sky;
 extern EntityMesh* jetpack;
+extern EntityMesh* iaSun;
 
 extern Animation* idle;
 extern Animation* walk;
@@ -67,6 +68,9 @@ STAGE_ID PlayStage::GetId() {
 	return STAGE_ID::PLAY;
 };
 void PlayStage::render() {
+	
+	iaSun->render();
+
 	if (!readedDecoration) {   //decoration
 		readScene("decorationScene.txt", &decoration); 
 		readedDecoration = true;

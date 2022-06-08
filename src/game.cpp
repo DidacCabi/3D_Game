@@ -22,6 +22,8 @@ EntityMesh* ground;
 
 EntityMesh* jetpack;
 
+EntityMesh* iaSun;
+
 std::vector<EntityMesh*> staticObjects;
 Mesh* mesh = NULL;
 Texture* texture = NULL;
@@ -84,10 +86,11 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	jetpack = new EntityMesh(Mesh::Get("data/Jetpack.obj"), Texture::Get("data/Jetpack_BaseColor.png"), shader, Vector4(1,1,1,1));
 	ground = new EntityMesh(Mesh::Get("data/platforms/ground.obj"), Texture::Get("data/platforms/ground.png"), shader, Vector4(1,1,1,1));
 	sky = new EntityMesh(Mesh::Get("data/sky.ASE"), Texture::Get("data/sky.tga"), shader, Vector4(1, 1, 1, 1));
+	iaSun = new EntityMesh(Mesh::Get("data/sun_2.obj"), Texture::Get("data/color-atlas-new.png"), shader, Vector4(1,1,1,1));
 
 	staticObjects.reserve(50);
 
-	player = new EntityMesh(playerMesh, playerTex, shader, Vector4(1, 1, 1, 1), "", "", NULL);
+	player = new EntityMesh(playerMesh, playerTex, shader, Vector4(1, 1, 1, 1));
 
 	//hide the cursor
 	SDL_ShowCursor(!mouse_locked); //hide or show the mouse
