@@ -22,7 +22,7 @@ EntityMesh* ground;
 
 EntityMesh* jetpack;
 
-EntityMesh* iaSun;
+EntityMesh* aiSun;
 
 std::vector<EntityMesh*> staticObjects;
 Mesh* mesh = NULL;
@@ -86,7 +86,8 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	jetpack = new EntityMesh(Mesh::Get("data/Jetpack.obj"), Texture::Get("data/Jetpack_BaseColor.png"), shader, Vector4(1,1,1,1));
 	ground = new EntityMesh(Mesh::Get("data/platforms/ground.obj"), Texture::Get("data/platforms/ground.png"), shader, Vector4(1,1,1,1));
 	sky = new EntityMesh(Mesh::Get("data/sky.ASE"), Texture::Get("data/sky.tga"), shader, Vector4(1, 1, 1, 1));
-	iaSun = new EntityMesh(Mesh::Get("data/sun_2.obj"), Texture::Get("data/color-atlas-new.png"), shader, Vector4(1,1,1,1));
+	aiSun = new EntityMesh(Mesh::Get("data/sun_2.obj"), Texture::Get("data/color-atlas-new.png"), shader, Vector4(1,1,1,1));
+	aiSun->model.setTranslation(10, 3, 10);
 
 	staticObjects.reserve(50);
 
@@ -96,10 +97,10 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	SDL_ShowCursor(!mouse_locked); //hide or show the mouse
 
 	//Inicializamos BASS al arrancar el juego (id_del_device, muestras por segundo, ...)
-	if (BASS_Init(-1, 44100, 0, 0, NULL) == false) //-1 significa usar el por defecto del sistema operativo
-	{
-		//error abriendo la tarjeta de sonido...
-	}
+	//if (BASS_Init(-1, 44100, 0, 0, NULL) == false) //-1 significa usar el por defecto del sistema operativo
+	//{
+	//	//error abriendo la tarjeta de sonido...
+	//}
 
 }
 

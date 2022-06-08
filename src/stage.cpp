@@ -5,6 +5,7 @@
 #include "entityMesh.h"
 #include "camera.h"
 #include "collision.h"
+#include "ai.h"
 #include <iostream>
 #include <fstream>
 
@@ -21,7 +22,7 @@ extern std::vector<EntityMesh*> staticObjects;
 extern EntityMesh* ground;
 extern EntityMesh* sky;
 extern EntityMesh* jetpack;
-extern EntityMesh* iaSun;
+extern EntityMesh* aiSun;
 
 extern Animation* idle;
 extern Animation* walk;
@@ -69,7 +70,7 @@ STAGE_ID PlayStage::GetId() {
 };
 void PlayStage::render() {
 	
-	iaSun->render();
+	aiSun->render();
 
 	if (!readedDecoration) {   //decoration
 		readScene("decorationScene.txt", &decoration); 
@@ -102,7 +103,7 @@ void PlayStage::render() {
 	jetpack->render();
 };
 void PlayStage::update(float seconds_elapsed) {
-	std::cout << "level: " << level << std::endl;
+	//std::cout << "level: " << level << std::endl;
 	isJumping = false;
 	float speed = seconds_elapsed * 50.0f; //mouse_speed, the speed is defined by the seconds_elapsed so it goes constant
 	Matrix44 playerRotation;
@@ -143,9 +144,9 @@ void PlayStage::update(float seconds_elapsed) {
 		if (Input::isKeyPressed(SDL_SCANCODE_D)) { 
 			playerVel = playerVel - (right * playerSpeed);
 			direction = 3;
-		}
-		// TODO 
-		if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && canJump){
+		} 
+
+		if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && canJump){   //jump
 			jumpCounter -= seconds_elapsed;
 			if (jumpCounter > 0.0f) {
 				playerVel = playerVel + (up * playerSpeed);
@@ -173,7 +174,7 @@ void PlayStage::update(float seconds_elapsed) {
 				playerModel.translate(-playerSpeed * boost, 0.0f, 0.0f);
 				break;
 			}
-		}
+		}	
 	}
 	else {
 		//async input to move the camera around
@@ -200,15 +201,16 @@ void PlayStage::update(float seconds_elapsed) {
 	if(!Collision::testBelowPlayerColl(player)) nextPos = Collision::testSidePlayerColl(playerStruct.pos, nextPos, seconds_elapsed);
 	playerStruct.pos = nextPos;
 	
-	player->model.setTranslation(playerStruct.pos.x, playerStruct.pos.y, playerStruct.pos.z);
+	player->model.setTranslationVec(playerStruct.pos);
 	player->model.rotate(playerStruct.yaw * DEG2RAD, Vector3(0,1,0));
 
 	//if (playerVel.x != 0.0f || playerVel.y != 0.0f || playerVel.z != 0.0f) player->anim = walk;  //player animations
 	//else player->anim = idle;
 
 	jetpack->model.setTranslation(playerStruct.pos.x, playerStruct.pos.y + 0.73f, playerStruct.pos.z - 0.3f);
+	
+	AI::following_AI(seconds_elapsed);
 };
-
 
 
 STAGE_ID EditorStage::GetId() {

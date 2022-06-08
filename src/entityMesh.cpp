@@ -15,7 +15,7 @@ EntityMesh::EntityMesh(Mesh* mesh, Texture* tex, Shader * shader, Vector4 color 
 
 EntityMesh::EntityMesh(Mesh* mesh, Texture* tex, Shader* shader, Vector4 color) {
     this->mesh = mesh;
-    this->model = model;
+    this->model = Matrix44();
     this->color = color;
     this->shader = shader;
     this->texture = tex;
