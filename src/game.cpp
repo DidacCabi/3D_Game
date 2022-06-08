@@ -17,6 +17,7 @@
 extern std::vector<Stage*> stages;
 extern STAGE_ID currentStage;
 
+EntityMesh* sky;
 EntityMesh* ground;
 
 EntityMesh* jetpack;
@@ -82,9 +83,9 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 
 	jetpack = new EntityMesh(Mesh::Get("data/Jetpack.obj"), Texture::Get("data/Jetpack_BaseColor.png"), shader, Vector4(1,1,1,1));
 	ground = new EntityMesh(Mesh::Get("data/platforms/ground.obj"), Texture::Get("data/platforms/ground.png"), shader, Vector4(1,1,1,1));
+	sky = new EntityMesh(Mesh::Get("data/sky.ASE"), Texture::Get("data/sky.tga"), shader, Vector4(1, 1, 1, 1));
 
 	staticObjects.reserve(50);
-	staticObjects.push_back(new EntityMesh(Mesh::Get("data/sky.ASE"), Texture::Get("data/sky.tga"), shader, Vector4(1, 1, 1, 1)));
 
 	player = new EntityMesh(playerMesh, playerTex, shader, Vector4(1, 1, 1, 1), "", "", NULL);
 
@@ -118,35 +119,6 @@ void RenderMesh(Matrix44& model, Mesh* a_mesh, Texture* tex, Shader* a_shader, C
 	shader->disable();
 }
 
-void RenderIslands() {
-
-	if (shader)
-	{
-		//enable shader
-		shader->enable();
-
-		//upload uniforms
-		shader->setUniform("u_color", Vector4(1, 1, 1, 1));
-		shader->setUniform("u_viewprojection", Game::instance->camera->viewprojection_matrix);
-		shader->setUniform("u_texture", texture, 0);
-		shader->setUniform("u_time", time);
-
-		Matrix44 m;
-		for (size_t i = 0; i < 10; i++)
-		{
-			for (size_t j = 0; j < 10; j++)
-			{
-				Vector3 size = mesh->box.halfsize * 2;
-				m.setTranslation(size.x * i, 0.0f, size.z * j);
-				shader->setUniform("u_model", m);
-				mesh->render(GL_TRIANGLES);
-			}
-		}
-
-		//disable shader
-		shader->disable();
-	}
-}
 
 //what to do when the image has to be draw
 void Game::render(void)

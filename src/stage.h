@@ -21,13 +21,9 @@ enum STAGE_ID {
 
 class Stage {
 public:
-	
-	int level = 0;
-
 	virtual STAGE_ID GetId() = 0;
 	virtual void render() = 0;
 	virtual void update(float seconds_elapsed) = 0;
-
 };
 
 class IntroStage : public Stage {
@@ -107,7 +103,6 @@ struct sPlayer {
 	bool isMoving;
 	PLAYER_DIR dir;
 	bool isDead = 0;
-	
 };
 
 
@@ -115,5 +110,5 @@ void GroundRendering();
 void saveScene(const char* fileName);
 void readScene(const char* fileName, std::vector<EntityMesh*>* vector);
 
-void loadLevel(int level);
+void loadLevel(Vector3 playerPos);
 #endif 

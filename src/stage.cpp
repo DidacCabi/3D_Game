@@ -12,14 +12,14 @@ std::vector<Stage*> stages;
 
 STAGE_ID currentStage = STAGE_ID::INTRO;
 
+int level = 0;
+
 extern Shader* shader;
 extern std::vector<EntityMesh*> platforms;
 extern std::vector<EntityMesh*> staticObjects;
-extern std::vector<Mesh*> platformMeshes;
-extern std::vector<Texture*> platformTexs;
-extern std::vector<Matrix44> platformModels;
 
 extern EntityMesh* ground;
+extern EntityMesh* sky;
 extern EntityMesh* jetpack;
 
 extern Animation* idle;
@@ -72,6 +72,7 @@ void PlayStage::render() {
 		readedDecoration = true;
 	}
 	ground->render(60.0f); //ground
+	sky->render();
 
 	if (cameraLocked) {
 		Vector3 eye = player->model * Vector3(0.0f, 3.0f, -6.0f);
@@ -90,13 +91,14 @@ void PlayStage::render() {
 		obj->render();
 	}
 
-	loadLevel(level);
+	loadLevel(playerStruct.pos);
 
 	//player->model.scale(0.01f, 0.01f, 0.01f);
 	player->render();
 	jetpack->render();
 };
 void PlayStage::update(float seconds_elapsed) {
+	std::cout << "level: " << level << std::endl;
 	isJumping = false;
 	float speed = seconds_elapsed * 50.0f; //mouse_speed, the speed is defined by the seconds_elapsed so it goes constant
 	Matrix44 playerRotation;
@@ -174,7 +176,7 @@ void PlayStage::update(float seconds_elapsed) {
 		cameraMove(camera, speed);
 	}
 
-	std::cout << "jump timer: " << jumpCounter << std::endl;
+	//std::cout << "jump timer: " << jumpCounter << std::endl;
 
 	//std::cout << "col with ground: " << Collision::testBelowPlayerColl(player) << std::endl;
 	float gravity = 9.0f * seconds_elapsed;    
@@ -211,9 +213,9 @@ STAGE_ID EditorStage::GetId() {
 void EditorStage::render() {
 	ground->render(60.0f);
 
-	for (int i = 0; i < editorPlatforms.size(); i++) {
-		editorPlatforms[i]->mesh->renderBounding(editorPlatforms[i]->model);
-		editorPlatforms[i]->render();
+	for (int i = 0; i < staticObjects.size(); i++) {
+		staticObjects[i]->mesh->renderBounding(staticObjects[i]->model);
+		staticObjects[i]->render();
 	}
 };
 void EditorStage::update(float seconds_elapsed) {
@@ -332,8 +334,8 @@ void EditorStage::renderInFront(std::string meshPath, std::string texPath) {
 
 	EntityMesh* entity = new EntityMesh(NULL, NULL, shader, Vector4(1, 1, 1, 1), meshPath, texPath, NULL);
 	entity->model = model;
-	editorPlatforms.reserve(1);
-	editorPlatforms.push_back(entity);
+	staticObjects.reserve(1);
+	staticObjects.push_back(entity);
 }
 void EditorStage::selectObject() {
 	selected = Collision::RayPick(Game::instance->camera);
@@ -384,10 +386,10 @@ void saveScene(const char* fileName) {
 	std::ofstream myfile;
 	printf("\nCreating file to save the actual editor scene...\n");
 	myfile.open(fileName);
-	myfile << editorPlatforms.size() << "\n";
-	for (size_t i = 0; i < editorPlatforms.size(); i++)
+	myfile << staticObjects.size() << "\n";
+	for (size_t i = 0; i < staticObjects.size(); i++)
 	{
-		EntityMesh* platform = editorPlatforms[i];
+		EntityMesh* platform = staticObjects[i];
 		Matrix44 m = platform->model;
 
 		for (int j = 0; j < 16; j++)  //print the model to the file
@@ -440,11 +442,11 @@ void readScene(const char* fileName, std::vector<EntityMesh*>* vector) {
 }
 
 
-void loadLevel(int level) {
+void loadLevel(Vector3 playerPos) {
 	Vector3 coinPos[5] = {
-		Vector3(10,10,30),
-		Vector3(10,10,10),
-		Vector3(10,10,10),
+		Vector3(0,0,30),
+		Vector3(10,10,40),
+		Vector3(0,0,10),
 		Vector3(10,10,10),
 		Vector3(10,10,10)
 	};
@@ -452,4 +454,16 @@ void loadLevel(int level) {
 
 	coin->model.setTranslationVec(coinPos[level]);
 	coin->render();
+
+	if (playerPos.distance(coinPos[level]) < 1.0f) {  //check if player got the coin, then change the level
+		level++; 
+		if (level == 4) {
+			staticObjects.clear();
+			SetStage(STAGE_ID::END);
+		}
+		else {
+			staticObjects.clear();
+			SetStage(STAGE_ID::EDITOR);
+		}
+	}
 }
