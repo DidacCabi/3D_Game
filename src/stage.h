@@ -12,7 +12,7 @@
 
 enum STAGE_ID {
 	INTRO,
-	TUTORIAL,
+	LOADING,
 	PLAY,
 	EDITOR,
 	END
@@ -33,7 +33,7 @@ public:
 	void update(float seconds_elapsed);
 };
 
-class TutorialStage : public Stage {
+class LoadingStage : public Stage {
 public:
 	STAGE_ID GetId();
 	void render();
@@ -66,7 +66,8 @@ public:
 	bool mode = false;   //switch between decoration and platforms mode
 	EntityMesh* selected = NULL;
 
-	int objectsPerLevel[5] = {2,3,4,2,5};
+	int objectsPerLevel[5] = {1,2,4,2,5};
+	int objectsLeft[5] = {1,2,4,2,5};
 
 	STAGE_ID GetId();
 	void render();

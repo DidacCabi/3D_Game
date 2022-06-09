@@ -23,12 +23,21 @@ EntityMesh* Collision::RayPick(Camera* cam) {
 	return NULL;
 }
 
-Vector3 Collision::testSidePlayerColl(Vector3 playerPos, Vector3 nextPos, float elapsed_time) {
+Vector3 Collision::testSidePlayerColl(EntityMesh* player, Vector3 playerPos, Vector3 nextPos, float elapsed_time, EntityMesh* aiSun, int level) {
 	for (size_t i = 0; i < staticObjects.size(); i++)
 	{
-		Vector3 coll, collnorm;
 		EntityMesh* platform = staticObjects[i];
-		if (!platform->mesh->testSphereCollision(platform->model, playerPos, 0.2f, coll, collnorm)) continue;
+
+		if (level == 4) {
+			Vector3 sunColl, sunCollnorm;
+			if (aiSun->mesh->testSphereCollision(aiSun->model, platform->getPosition(), 1.5f, sunColl, sunCollnorm)) {
+				staticObjects.erase(staticObjects.begin() + i);
+				continue;
+			}
+		}
+
+		Vector3 coll, collnorm;
+		if (!player->mesh->testSphereCollision(player->model, platform->getPosition(), 2.0f, coll, collnorm)) continue;
 		Vector3 pushAway = normalize(coll - playerPos) * elapsed_time;
 		nextPos = playerPos - pushAway;
 		return nextPos;

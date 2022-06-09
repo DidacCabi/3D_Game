@@ -13,7 +13,7 @@ std::vector<Stage*> stages;
 
 STAGE_ID currentStage = STAGE_ID::INTRO;
 
-int level = 0;
+int level = 4;
 
 extern Shader* shader;
 extern std::vector<EntityMesh*> platforms;
@@ -48,20 +48,20 @@ void IntroStage::render() {
 };
 void IntroStage::update(float seconds_elapsed) {
 	if (Input::isKeyPressed(SDL_SCANCODE_S)) {
-		SetStage((STAGE_ID)TUTORIAL);
+		SetStage((STAGE_ID)LOADING);
 	}
 };
 
 
 
 //Tutorial Stage methods
-STAGE_ID TutorialStage::GetId() {
-	return STAGE_ID::TUTORIAL;
+STAGE_ID LoadingStage::GetId() {
+	return STAGE_ID::LOADING;
 }
-void TutorialStage::render() {
-	drawText((Game::instance->window_width / 2) - 290, Game::instance->window_height / 2, "TUTORIAL STAGE", Vector3(1, 0.5, 1), 8.0f);
+void LoadingStage::render() {
+	drawText((Game::instance->window_width / 2) - 290, Game::instance->window_height / 2, "LOADING STAGE", Vector3(1, 0.5, 1), 8.0f);
 };
-void TutorialStage::update(float seconds_elapsed) {};
+void LoadingStage::update(float seconds_elapsed) {};
 
 
 
@@ -70,7 +70,7 @@ STAGE_ID PlayStage::GetId() {
 };
 void PlayStage::render() {
 	
-	aiSun->render();
+	if (level == 4) { aiSun->render(); aiSun->mesh->renderBounding(aiSun->model); }
 
 	if (!readedDecoration) {   //decoration
 		readScene("decorationScene.txt", &decoration); 
@@ -101,9 +101,13 @@ void PlayStage::render() {
 	//player->model.scale(0.01f, 0.01f, 0.01f);
 	player->render();
 	jetpack->render();
+
+	drawText(Game::instance->window_width - 340, 20, "level " + std::to_string(level), Vector3(1, 1, 1), 3.0f);
 };
 void PlayStage::update(float seconds_elapsed) {
+
 	//std::cout << "level: " << level << std::endl;
+
 	isJumping = false;
 	float speed = seconds_elapsed * 50.0f; //mouse_speed, the speed is defined by the seconds_elapsed so it goes constant
 	Matrix44 playerRotation;
@@ -159,19 +163,19 @@ void PlayStage::update(float seconds_elapsed) {
 		}
 
 		if (Input::wasKeyPressed(SDL_SCANCODE_E)) {   //Dash
-			float boost = 80.0f;
+			float boost = 10.0f;
 			switch(direction){
 			case 0:
-				playerModel.translate(0.0f, 0.0f, playerSpeed * boost);
+				playerVel = playerVel - (forward * boost);
 				break;
 			case 1:
-				playerModel.translate(0.0f, 0.0f, -playerSpeed * boost);
+				playerVel = playerVel + (forward * boost);
 				break;
 			case 2:
-				playerModel.translate(playerSpeed * boost, 0.0f, 0.0f);
+				playerVel = playerVel + (right * boost);
 				break;
 			case 3:
-				playerModel.translate(-playerSpeed * boost, 0.0f, 0.0f);
+				playerVel = playerVel - (right * boost);
 				break;
 			}
 		}	
@@ -198,7 +202,8 @@ void PlayStage::update(float seconds_elapsed) {
 	}
 	
 	Vector3 nextPos = playerStruct.pos + playerVel;
-	if(!Collision::testBelowPlayerColl(player)) nextPos = Collision::testSidePlayerColl(playerStruct.pos, nextPos, seconds_elapsed);
+	if(!Collision::testBelowPlayerColl(player)) nextPos = Collision::testSidePlayerColl(player, playerStruct.pos, nextPos, seconds_elapsed, aiSun, level);
+	if (nextPos.y < 0.1f) nextPos.y = 0.1f;
 	playerStruct.pos = nextPos;
 	
 	player->model.setTranslationVec(playerStruct.pos);
@@ -209,7 +214,7 @@ void PlayStage::update(float seconds_elapsed) {
 
 	jetpack->model.setTranslation(playerStruct.pos.x, playerStruct.pos.y + 0.73f, playerStruct.pos.z - 0.3f);
 	
-	AI::following_AI(seconds_elapsed);
+	if(level == 4) AI::following_AI(seconds_elapsed);
 };
 
 
@@ -223,6 +228,9 @@ void EditorStage::render() {
 		staticObjects[i]->mesh->renderBounding(staticObjects[i]->model);
 		staticObjects[i]->render();
 	}
+
+	drawText(Game::instance->window_width - 180, 10, "platforms left: " + std::to_string(objectsLeft[level]), Vector3(1, 1, 1), 2.0f);
+	drawText(Game::instance->window_width - 340, 20, "level " + std::to_string(level), Vector3(1, 1, 1), 3.0f);
 };
 void EditorStage::update(float seconds_elapsed) {
 
@@ -237,7 +245,8 @@ void EditorStage::update(float seconds_elapsed) {
 	cameraMove(camera, speed);
 
 	if (Input::wasKeyPressed(SDL_SCANCODE_G)) {
-		if (!mode) {
+		if (!mode && objectsLeft[level] > 0) {
+			objectsLeft[level] -= 1;
 			switch (objectNum) {
 			case 0:
 				renderInFront("data/platforms/blockSnow.obj", "data/platforms/blockSnow.png");
@@ -253,7 +262,7 @@ void EditorStage::update(float seconds_elapsed) {
 				break;
 			}
 		}
-		else {
+		if(mode) {
 			switch (decorationNum) {
 			case 0:
 				renderInFront("data/decoration/SM_Env_Cactus_14_74.obj", "data/decoration/westernTex.png");
@@ -372,7 +381,7 @@ void SetStage(STAGE_ID id) {
 void InitStages() {
 	stages.reserve(4);
 	stages.push_back(new IntroStage());
-	stages.push_back(new TutorialStage());
+	stages.push_back(new LoadingStage());
 	stages.push_back(new PlayStage());
 	stages.push_back(new EditorStage());
 	stages.push_back(new EndStage());
@@ -449,20 +458,19 @@ void readScene(const char* fileName, std::vector<EntityMesh*>* vector) {
 
 
 void loadLevel(Vector3 playerPos) {
-	Vector3 coinPos[5] = {
+	Vector3 coinPos[5] = {  //five levels, the first one will be like a tuto
 		Vector3(0,0,30),
 		Vector3(10,10,40),
 		Vector3(0,0,10),
 		Vector3(10,10,10),
-		Vector3(10,10,10)
+		Vector3(20,10,10)
 	};
-	EntityMesh* coin = new EntityMesh(NULL, NULL, shader, Vector4(1, 1, 1, 1), "data/decoration/coin.obj", "data/decoration/coin.png", NULL);
+	EntityMesh* water = new EntityMesh(NULL, NULL, shader, Vector4(1, 1, 1, 1), "data/decoration/rain.obj", "data/color-atlas-new.png", NULL);
 
-	coin->model.setTranslationVec(coinPos[level]);
-	coin->render();
+	water->model.setTranslationVec(coinPos[level]);
+	water->render();
 
 	if (playerPos.distance(coinPos[level]) < 1.0f) {  //check if player got the coin, then change the level
-		level++; 
 		if (level == 4) {
 			staticObjects.clear();
 			SetStage(STAGE_ID::END);
@@ -471,5 +479,6 @@ void loadLevel(Vector3 playerPos) {
 			staticObjects.clear();
 			SetStage(STAGE_ID::EDITOR);
 		}
+		level = (level + 1) % 5;
 	}
 }
