@@ -21,7 +21,7 @@ EntityMesh* sky;
 EntityMesh* ground;
 
 EntityMesh* jetpack;
-
+EntityMesh* npc;
 EntityMesh* aiSun;
 
 std::vector<EntityMesh*> staticObjects;
@@ -31,6 +31,7 @@ Shader* shader = NULL;
 Shader* animShader = NULL;
 
 EntityMesh* player;
+Mesh* playerObj = NULL;
 Mesh* playerMesh = NULL;
 Texture* playerTex = NULL;
 
@@ -72,8 +73,8 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	InitStages();
 
 	//loading Mesh from Mesh Manager
-	playerMesh = Mesh::Get("data/Chr_Dungeon_Skeleton_01_34.obj");
-	//playerMesh = Mesh::Get("data/animations/dance.mesh");
+	playerObj = Mesh::Get("data/Chr_Dungeon_Skeleton_01_34.obj");
+	playerMesh = Mesh::Get("data/animations/dance.mesh");
 	playerTex = Texture::Get("data/PolygonMinis_Texture.png");
 	dance = Animation::Get("data/animations/dance.skanim");
 	walk = Animation::Get("data/animations/walk.skanim");
@@ -90,7 +91,8 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 
 	staticObjects.reserve(50);
 
-	player = new EntityMesh(playerMesh, playerTex, shader, Vector4(1, 1, 1, 1));
+	player = new EntityMesh(playerObj, playerTex, shader, Vector4(1, 1, 1, 1));
+	npc = new EntityMesh(playerMesh, playerTex, animShader, Vector4(1, 1, 1, 1), "", "", walk);
 
 	//hide the cursor
 	SDL_ShowCursor(!mouse_locked); //hide or show the mouse

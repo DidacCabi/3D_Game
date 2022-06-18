@@ -47,6 +47,7 @@ public:
 	struct sPlayer {
 		Vector3 pos;
 		float yaw;
+		float scale;
 	};
 	sPlayer playerStruct;	
 	float jumpCounter = 0;

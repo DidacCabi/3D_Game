@@ -23,6 +23,7 @@ extern EntityMesh* ground;
 extern EntityMesh* sky;
 extern EntityMesh* jetpack;
 extern EntityMesh* aiSun;
+extern EntityMesh* npc;
 
 extern Animation* idle;
 extern Animation* walk;
@@ -70,7 +71,8 @@ STAGE_ID PlayStage::GetId() {
 };
 void PlayStage::render() {
 	
-	if (level == 4) { aiSun->render(); aiSun->mesh->renderBounding(aiSun->model); }
+	if (level == 4) aiSun->render();
+	aiSun->mesh->renderBounding(aiSun->model);
 
 	if (!readedDecoration) {   //decoration
 		readScene("decorationScene.txt", &decoration); 
@@ -97,9 +99,16 @@ void PlayStage::render() {
 	}
 
 	loadLevel(playerStruct.pos);
-
-	//player->model.scale(0.01f, 0.01f, 0.01f);
+	playerStruct.scale = 0.1f;
 	player->render();
+
+	Matrix44 npcModel;
+	npcModel.scale(0.1f, 0.1f, 0.1f);
+	npcModel.translate(200, 0, 1050);
+	npc->model = npcModel;
+	npc->render();
+	npc->mesh->renderBounding(npc->model);
+
 	jetpack->render();
 
 	drawText(Game::instance->window_width - 340, 20, "level " + std::to_string(level), Vector3(1, 1, 1), 3.0f);
