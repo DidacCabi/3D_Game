@@ -8,6 +8,7 @@
 #include "ai.h"
 #include <iostream>
 #include <fstream>
+#include "gui.h"
 
 std::vector<Stage*> stages;
 
@@ -110,6 +111,7 @@ void PlayStage::render() {
 	npc->mesh->renderBounding(npc->model);
 
 	jetpack->render();
+	GUI::RenderAllGUI();
 
 	drawText(Game::instance->window_width - 340, 20, "level " + std::to_string(level), Vector3(1, 1, 1), 3.0f);
 };
