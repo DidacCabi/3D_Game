@@ -14,7 +14,8 @@ std::vector<Stage*> stages;
 
 STAGE_ID currentStage = STAGE_ID::INTRO;
 
-int level = 4;
+int level = 3;
+int levels = 4;
 
 extern Shader* shader;
 extern std::vector<EntityMesh*> platforms;
@@ -71,12 +72,11 @@ STAGE_ID PlayStage::GetId() {
 	return STAGE_ID::PLAY;
 };
 void PlayStage::render() {
-	
-	if (level == 4) aiSun->render();
-	aiSun->mesh->renderBounding(aiSun->model);
+
+	if (level == (levels - 1)) aiSun->render();
 
 	if (!readedDecoration) {   //decoration
-		readScene("decorationScene.txt", &decoration); 
+		readScene("decorationScene.txt", &decoration);
 		readedDecoration = true;
 	}
 	ground->render(60.0f); //ground
@@ -122,12 +122,12 @@ void PlayStage::update(float seconds_elapsed) {
 	isJumping = false;
 	float speed = seconds_elapsed * 50.0f; //mouse_speed, the speed is defined by the seconds_elapsed so it goes constant
 	Matrix44 playerRotation;
-	playerRotation.rotate(playerStruct.yaw * DEG2RAD, Vector3(0,1,0));
+	playerRotation.rotate(playerStruct.yaw * DEG2RAD, Vector3(0, 1, 0));
 	Vector3 playerVel;
-	Vector3 forward = playerRotation.rotateVector(Vector3(0,0,-1));
-	Vector3 right = playerRotation.rotateVector(Vector3(1,0,0));
-	Vector3 up = playerRotation.rotateVector(Vector3(0,1,0));
-	
+	Vector3 forward = playerRotation.rotateVector(Vector3(0, 0, -1));
+	Vector3 right = playerRotation.rotateVector(Vector3(1, 0, 0));
+	Vector3 up = playerRotation.rotateVector(Vector3(0, 1, 0));
+
 
 	Camera* camera = Game::instance->camera;
 	//mouse input to rotate the cam
@@ -135,7 +135,7 @@ void PlayStage::update(float seconds_elapsed) {
 	{
 		camera->rotate(Input::mouse_delta.x * 0.005f, Vector3(0.0f, -1.0f, 0.0f));
 		camera->rotate(Input::mouse_delta.y * 0.005f, camera->getLocalVector(Vector3(-1.0f, 0.0f, 0.0f)));
-	}	
+	}
 
 	if (Input::wasKeyPressed(SDL_SCANCODE_TAB)) {
 		cameraLocked = !cameraLocked;
@@ -147,35 +147,35 @@ void PlayStage::update(float seconds_elapsed) {
 			playerVel = playerVel - (forward * playerSpeed);
 			direction = 0;
 		}
-		if (Input::isKeyPressed(SDL_SCANCODE_S)) { 
+		if (Input::isKeyPressed(SDL_SCANCODE_S)) {
 			playerVel = playerVel + (forward * playerSpeed);
 			direction = 1;
 		}
-	
+
 		if (Input::isKeyPressed(SDL_SCANCODE_A)) {
 			playerVel = playerVel + (right * playerSpeed);
 			direction = 2;
 		}
-		if (Input::isKeyPressed(SDL_SCANCODE_D)) { 
+		if (Input::isKeyPressed(SDL_SCANCODE_D)) {
 			playerVel = playerVel - (right * playerSpeed);
 			direction = 3;
-		} 
+		}
 
-		if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && canJump){   //jump
+		if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && canJump) {   //jump
 			jumpCounter -= seconds_elapsed;
 			if (jumpCounter > 0.0f) {
 				playerVel = playerVel + (up * playerSpeed);
 				isJumping = true;
 			}
 			else {
-				canJump = false; 
+				canJump = false;
 				jumpCounter = jumpTime;
 			}
 		}
 
 		if (Input::wasKeyPressed(SDL_SCANCODE_E)) {   //Dash
 			float boost = 10.0f;
-			switch(direction){
+			switch (direction) {
 			case 0:
 				playerVel = playerVel - (forward * boost);
 				break;
@@ -189,7 +189,7 @@ void PlayStage::update(float seconds_elapsed) {
 				playerVel = playerVel - (right * boost);
 				break;
 			}
-		}	
+		}
 	}
 	else {
 		//async input to move the camera around
@@ -199,7 +199,7 @@ void PlayStage::update(float seconds_elapsed) {
 	//std::cout << "jump timer: " << jumpCounter << std::endl;
 
 	//std::cout << "col with ground: " << Collision::testBelowPlayerColl(player) << std::endl;
-	float gravity = 9.0f * seconds_elapsed;    
+	float gravity = 9.0f * seconds_elapsed;
 	if (playerStruct.pos.y > 0 && !Collision::testBelowPlayerColl(player) && !isJumping) {    //TODO
 		playerVel = playerVel - (up * gravity);
 	}
@@ -207,25 +207,25 @@ void PlayStage::update(float seconds_elapsed) {
 		canJump = true;
 	}
 
-	if (playerStruct.pos.y < 0.2f || Collision::testBelowPlayerColl(player)) { 
-		canJump = true; 
+	if (playerStruct.pos.y < 0.2f || Collision::testBelowPlayerColl(player)) {
+		canJump = true;
 		jumpCounter = jumpTime;
 	}
-	
+
 	Vector3 nextPos = playerStruct.pos + playerVel;
-	if(!Collision::testBelowPlayerColl(player)) nextPos = Collision::testSidePlayerColl(player, playerStruct.pos, nextPos, seconds_elapsed, aiSun, level);
+	if (!Collision::testBelowPlayerColl(player)) nextPos = Collision::testSidePlayerColl(player, playerStruct.pos, nextPos, seconds_elapsed, aiSun, level);
 	if (nextPos.y < 0.1f) nextPos.y = 0.1f;
 	playerStruct.pos = nextPos;
-	
+
 	player->model.setTranslationVec(playerStruct.pos);
-	player->model.rotate(playerStruct.yaw * DEG2RAD, Vector3(0,1,0));
+	player->model.rotate(playerStruct.yaw * DEG2RAD, Vector3(0, 1, 0));
 
 	//if (playerVel.x != 0.0f || playerVel.y != 0.0f || playerVel.z != 0.0f) player->anim = walk;  //player animations
 	//else player->anim = idle;
 
 	jetpack->model.setTranslation(playerStruct.pos.x, playerStruct.pos.y + 0.73f, playerStruct.pos.z - 0.3f);
-	
-	if(level == 4) AI::following_AI(seconds_elapsed);
+
+	if (level == (levels - 1)) AI::following_AI(seconds_elapsed);
 };
 
 
@@ -273,7 +273,7 @@ void EditorStage::update(float seconds_elapsed) {
 				break;
 			}
 		}
-		if(mode) {
+		if (mode) {
 			switch (decorationNum) {
 			case 0:
 				renderInFront("data/decoration/SM_Env_Cactus_14_74.obj", "data/decoration/westernTex.png");
@@ -336,12 +336,12 @@ void EditorStage::update(float seconds_elapsed) {
 	float objectMoveSpeed = 20.0f * seconds_elapsed;
 	if (Input::isKeyPressed(SDL_SCANCODE_UP) && selected != NULL) selected->model.translate(0, 0, objectMoveSpeed);
 	if (Input::isKeyPressed(SDL_SCANCODE_DOWN) && selected != NULL) selected->model.translate(0, 0, -objectMoveSpeed);
-	if (Input::isKeyPressed(SDL_SCANCODE_LEFT) && selected != NULL) selected->model.translate(objectMoveSpeed,0,0);
+	if (Input::isKeyPressed(SDL_SCANCODE_LEFT) && selected != NULL) selected->model.translate(objectMoveSpeed, 0, 0);
 	if (Input::isKeyPressed(SDL_SCANCODE_RIGHT) && selected != NULL) selected->model.translate(-objectMoveSpeed, 0, 0);
 	if (Input::isKeyPressed(SDL_SCANCODE_M) && selected != NULL) selected->model.translate(0, objectMoveSpeed, 0);
 	if (Input::isKeyPressed(SDL_SCANCODE_N) && selected != NULL && selected->getPosition().y > 0.1f) selected->model.translate(0, -objectMoveSpeed, 0);
 };
-void EditorStage::onKeyDown(SDL_KeyboardEvent event) { 
+void EditorStage::onKeyDown(SDL_KeyboardEvent event) {
 	switch (event.keysym.sym) {
 		//case SDLK_g: renderInFront(platformMeshes[0], NULL); break;
 	}
@@ -354,7 +354,7 @@ void EditorStage::renderInFront(std::string meshPath, std::string texPath) {
 	Vector3 dir = cam->getRayDirection(mouse.x, mouse.y, g->window_width, g->window_height);
 	Vector3 rayOrigin = cam->eye;
 
-	Vector3 spawnPos = RayPlaneCollision(Vector3(0,0,0), Vector3(0, 1, 0), rayOrigin, dir);
+	Vector3 spawnPos = RayPlaneCollision(Vector3(0, 0, 0), Vector3(0, 1, 0), rayOrigin, dir);
 	Matrix44 model;
 	model.translate(spawnPos.x, spawnPos.y, spawnPos.z);
 
@@ -367,7 +367,7 @@ void EditorStage::selectObject() {
 	selected = Collision::RayPick(Game::instance->camera);
 }
 
-		
+
 STAGE_ID EndStage::GetId() {
 	return STAGE_ID::END;
 };
@@ -469,12 +469,11 @@ void readScene(const char* fileName, std::vector<EntityMesh*>* vector) {
 
 
 void loadLevel(Vector3 playerPos) {
-	Vector3 coinPos[5] = {  //five levels, the first one will be like a tuto
+	Vector3 coinPos[4] = {  //five levels, the first one will be like a tuto
 		Vector3(0,0,30),
 		Vector3(10,10,40),
 		Vector3(0,0,10),
-		Vector3(10,10,10),
-		Vector3(20,10,10)
+		Vector3(20,0,10),
 	};
 	EntityMesh* water = new EntityMesh(NULL, NULL, shader, Vector4(1, 1, 1, 1), "data/decoration/rain.obj", "data/color-atlas-new.png", NULL);
 
@@ -482,7 +481,7 @@ void loadLevel(Vector3 playerPos) {
 	water->render();
 
 	if (playerPos.distance(coinPos[level]) < 1.0f) {  //check if player got the coin, then change the level
-		if (level == 4) {
+		if (level == (levels - 1)) {
 			staticObjects.clear();
 			SetStage(STAGE_ID::END);
 		}
@@ -490,6 +489,6 @@ void loadLevel(Vector3 playerPos) {
 			staticObjects.clear();
 			SetStage(STAGE_ID::EDITOR);
 		}
-		level = (level + 1) % 5;
+		level = (level + 1) % levels;
 	}
 }
