@@ -17,6 +17,8 @@
 extern std::vector<Stage*> stages;
 extern STAGE_ID currentStage;
 
+extern bool wasLeftMousePressed;
+
 EntityMesh* sky;
 EntityMesh* ground;
 
@@ -209,6 +211,9 @@ void Game::onMouseButtonDown( SDL_MouseButtonEvent event )
 	{
 		mouse_locked = !mouse_locked;
 		SDL_ShowCursor(!mouse_locked);
+	}
+	if (event.button = SDL_BUTTON_LEFT) {
+		wasLeftMousePressed = true;
 	}
 }
 

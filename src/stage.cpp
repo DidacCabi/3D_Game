@@ -47,6 +47,7 @@ STAGE_ID IntroStage::GetId() {
 }
 void IntroStage::render() {
 	drawText((Game::instance->window_width / 2) - 280, Game::instance->window_height / 2, "INTRO STAGE", Vector3(1, 1, 1), 10.0f);
+	GUI::RenderAllGUI();
 };
 void IntroStage::update(float seconds_elapsed) {
 	if (Input::isKeyPressed(SDL_SCANCODE_S)) {
