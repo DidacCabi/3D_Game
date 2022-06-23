@@ -16,6 +16,7 @@ STAGE_ID currentStage = STAGE_ID::INTRO;
 
 int level = 3;
 int levels = 4;
+float jumpCounter;
 
 extern Shader* shader;
 extern std::vector<EntityMesh*> platforms;

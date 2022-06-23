@@ -2,6 +2,8 @@
 
 
 bool wasLeftMousePressed = false;
+//extern sPlayer playerStruct;
+extern float jumpCounter;
 
 void GUI::RenderGUI(float start_x, float start_y, float w, float h, Vector4 color, Texture* tex ){
 	int windowWidth = Game::instance->window_width;
@@ -55,11 +57,29 @@ void GUI::RenderAllGUI() {
 
 	RenderGUI(25, 25, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/jetpackFuel.png"));
 	RenderGUI(25, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/hydrated.png"));
-	RenderGUI(100, 25, 100, 25, Vector4(1, 1, 1, 1), Texture::Get("data/red_button11.png"));
+	//RenderGUI(100, 25, 100, 25, Vector4(1, 1, 1, 1), Texture::Get("data/red_button11.png"));
+	RenderGUI(100, 25, 100, 25, Vector4(1, 1, 1, 1), Texture::Get("data/red_button10.png"));
 
 	for (int i = 0; i <= 50; i+=25) {
 
 		RenderGUI(65 + i, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/blue_button06.png"));
+
+	}
+	if (Input::isKeyPressed(SDL_SCANCODE_SPACE)) {
+		//Matrix44 playerRot;
+		//Vector3 going_up = playerRot.rotateVector(Vector3(0, 1, 0));
+		/*for (float offset = 0; offset < 100; offset++) {
+			RenderGUI(100, 25, offset , 25, Vector4(1, 1, 1, 1), Texture::Get("data/red_button10.png"));
+		}*/
+		//for (float i = 0.0f; i <= 100.0f; i += 0.1f) {
+	    //RenderGUI(100, 25, jumpCounter * 40, 25, Vector4(1, 1, 1, 1), Texture::Get("data/red_button10.png"));
+		RenderGUI(100, 25, jumpCounter * 40, 25, Vector4(1, 1, 1, 1), Texture::Get("data/red_button11.png"));
+
+		//}
+	}
+	if (!Input::isKeyPressed(SDL_SCANCODE_SPACE)) {
+		RenderGUI(100, 25, jumpCounter * 40, 25, Vector4(1, 1, 1, 1), Texture::Get("data/red_button11.png"));
+		//RenderGUI(100, 25, -jumpCounter * 40, 25, Vector4(1, 1, 1, 1), Texture::Get("data/red_button11.png"));
 
 	}
 	//RenderButton(500, 500, Texture::Get("data/blue_panel.png"));

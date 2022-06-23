@@ -18,6 +18,7 @@ enum STAGE_ID {
 	END
 };
 
+//float jumpCounter;
 
 class Stage {
 public:
@@ -50,7 +51,7 @@ public:
 		float scale;
 	};
 	sPlayer playerStruct;	
-	float jumpCounter = 0;
+	
 	const float jumpTime = 2.5f;
 	bool canJump = true;
 	bool isJumping = false;

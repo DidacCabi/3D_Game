@@ -8,6 +8,9 @@
 #include "game.h"
 #include "shader.h"
 #include "input.h"
+#include "stage.h"
+
+
 
 class GUI {
 	public:
