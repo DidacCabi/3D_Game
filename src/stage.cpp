@@ -14,7 +14,7 @@ std::vector<Stage*> stages;
 
 STAGE_ID currentStage = STAGE_ID::INTRO;
 
-int level = 3;
+int level = 0;
 int levels = 4;
 float jumpCounter;
 
@@ -27,6 +27,7 @@ extern EntityMesh* sky;
 extern EntityMesh* jetpack;
 extern EntityMesh* aiSun;
 extern EntityMesh* npc;
+extern EntityMesh* wall;
 
 extern Animation* idle;
 extern Animation* walk;
@@ -49,7 +50,6 @@ STAGE_ID IntroStage::GetId() {
 }
 void IntroStage::render() {
 	drawText((Game::instance->window_width / 2) - 280, Game::instance->window_height / 2, "INTRO STAGE", Vector3(1, 1, 1), 10.0f);
-	GUI::RenderAllGUI();
 };
 void IntroStage::update(float seconds_elapsed) {
 	if (Input::isKeyPressed(SDL_SCANCODE_S)) {
@@ -85,10 +85,18 @@ void PlayStage::render() {
 	sky->render();
 
 	if (cameraLocked) {
-		Vector3 eye = player->model * Vector3(0.0f, 3.0f, -6.0f);
-		Vector3 center = player->model * Vector3(0.0f, 0.0f, 10.0f);
-		Vector3 up = player->model.rotateVector(Vector3(0.0f, 1.0f, 0.0f));
-		Game::instance->camera->lookAt(eye, center, up);
+		if (level == 1) {
+			Vector3 eye = player->model * Vector3(0.0f, 15.0f, 0.0f);
+			Vector3 center = player->model * Vector3(1.0f, 1.0f, 1.0f);
+			Vector3 up = player->model.rotateVector(Vector3(0.0f, 1.0f, 1.0f));
+			Game::instance->camera->lookAt(eye, center, up);
+		}
+		else {
+			Vector3 eye = player->model * Vector3(0.0f, 3.0f, -6.0f);
+			Vector3 center = player->model * Vector3(0.0f, 0.0f, 10.0f);
+			Vector3 up = player->model.rotateVector(Vector3(0.0f, 1.0f, 0.0f));
+			Game::instance->camera->lookAt(eye, center, up);
+		}
 	}
 	for (size_t i = 0; i < staticObjects.size(); i++)
 	{
@@ -217,6 +225,10 @@ void PlayStage::update(float seconds_elapsed) {
 	Vector3 nextPos = playerStruct.pos + playerVel;
 	if (!Collision::testBelowPlayerColl(player)) nextPos = Collision::testSidePlayerColl(player, playerStruct.pos, nextPos, seconds_elapsed, aiSun, level);
 	if (nextPos.y < 0.1f) nextPos.y = 0.1f;
+	if (level == 1){ 
+		nextPos.x = clamp(nextPos.x, -9, 27);
+		nextPos.z = clamp(nextPos.z, -9, 28);
+	}
 	playerStruct.pos = nextPos;
 
 	player->model.setTranslationVec(playerStruct.pos);
@@ -241,6 +253,7 @@ void EditorStage::render() {
 		staticObjects[i]->mesh->renderBounding(staticObjects[i]->model);
 		staticObjects[i]->render();
 	}
+	loadLevel(Vector3(0,0,0));
 
 	drawText(Game::instance->window_width - 180, 10, "platforms left: " + std::to_string(objectsLeft[level]), Vector3(1, 1, 1), 2.0f);
 	drawText(Game::instance->window_width - 340, 20, "level " + std::to_string(level), Vector3(1, 1, 1), 3.0f);
@@ -472,12 +485,27 @@ void readScene(const char* fileName, std::vector<EntityMesh*>* vector) {
 
 void loadLevel(Vector3 playerPos) {
 	Vector3 coinPos[4] = {  //five levels, the first one will be like a tuto
-		Vector3(0,0,30),
-		Vector3(10,10,40),
+		Vector3(0,20,40),
+		Vector3(10,40,20),
 		Vector3(0,0,10),
 		Vector3(20,0,10),
 	};
 	EntityMesh* water = new EntityMesh(NULL, NULL, shader, Vector4(1, 1, 1, 1), "data/decoration/rain.obj", "data/color-atlas-new.png", NULL);
+
+	if (level == 1) {
+		wall->model.setTranslation(-10, 0, 29);
+		wall->render();
+		EntityMesh wall1 = *wall;
+		wall1.model.setTranslation(-10, 0, -10);
+		wall1.model.rotate(90 * DEG2RAD, Vector3(0, 1, 0));
+		wall1.render();
+		EntityMesh wall2 = wall1;
+		wall2.model.translate(0, 0, -38);
+		wall2.render();
+		EntityMesh wall3 = *wall;
+		wall3.model.setTranslation(-9, 0, -10);
+		wall3.render();
+	}
 
 	water->model.setTranslationVec(coinPos[level]);
 	water->render();
