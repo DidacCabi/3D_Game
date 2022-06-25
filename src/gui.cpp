@@ -2,8 +2,10 @@
 
 
 bool wasLeftMousePressed = false;
+int waterCounter = 0;
 //extern sPlayer playerStruct;
 extern float jumpCounter;
+//extern PlayStage::sPlayer playerStruct;
 
 void GUI::RenderGUI(float start_x, float start_y, float w, float h, Vector4 color, Texture* tex ){
 	int windowWidth = Game::instance->window_width;
@@ -64,15 +66,22 @@ void GUI::RenderAllGUI() {
 
 		RenderGUI(65 + i, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/blue_button06.png"));
 
+		/*if (loadLevel(playerStruct.pos) == true) {
+			RenderGUI(65 + i, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/blue_button07.png"));
+			waterCounter++;
+		}*/
 	}
 	if (Input::isKeyPressed(SDL_SCANCODE_SPACE)) {
 		
 		RenderGUI(100, 25, jumpCounter * 40, 25, Vector4(1, 1, 1, 1), Texture::Get("data/red_button11.png"));
+		//PlayGameSound("data/jetpack.mp3");
 	}
 	if (!Input::isKeyPressed(SDL_SCANCODE_SPACE)) {
 		RenderGUI(100, 25, jumpCounter * 40, 25, Vector4(1, 1, 1, 1), Texture::Get("data/red_button11.png"));
 
 	}
+	
+		
 	//if()
 	//RenderButton(500, 500, Texture::Get("data/blue_panel.png"));
 	glEnable(GL_DEPTH_TEST);
@@ -82,6 +91,17 @@ void GUI::RenderAllGUI() {
 	wasLeftMousePressed = false;
 }
 
+void GUI::fillWaterSquare() {
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	RenderGUI(65, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/blue_button07.png"));
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glDisable(GL_BLEND);
+}
 
 

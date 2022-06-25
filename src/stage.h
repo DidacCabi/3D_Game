@@ -19,6 +19,7 @@ enum STAGE_ID {
 	END
 };
 
+
 HSAMPLE LoadSample(const char* fileName);
 void PlayGameSound(const char* fileName);
 
@@ -52,8 +53,7 @@ public:
 		float yaw;
 		float scale;
 	};
-	sPlayer playerStruct;	
-	
+	sPlayer playerStruct;
 	const float jumpTime = 3.2f;
 	bool canJump = true;
 	bool isJumping = false;
@@ -103,17 +103,17 @@ enum PLAYER_DIR {
 	UP = 3
 };
 
-struct sPlayer {
-	Vector2 pos;
-	bool isMoving;
-	PLAYER_DIR dir;
-	bool isDead = 0;
-};
+//struct sPlayer {
+//	Vector2 pos;
+//	bool isMoving;
+//	PLAYER_DIR dir;
+//	bool isDead = 0;
+//};
 
 
 void GroundRendering();
 void saveScene(const char* fileName);
 void readScene(const char* fileName, std::vector<EntityMesh*>* vector);
 
-void loadLevel(Vector3 playerPos);
+bool loadLevel(Vector3 playerPos);
 #endif 

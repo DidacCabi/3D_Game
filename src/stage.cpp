@@ -18,6 +18,7 @@ STAGE_ID currentStage = STAGE_ID::INTRO;
 int level = 0;
 int levels = 4;
 float jumpCounter;
+//sPlayer playerStruct;
 
 extern Shader* shader;
 extern std::vector<EntityMesh*> platforms;
@@ -177,6 +178,8 @@ void PlayStage::update(float seconds_elapsed) {
 			if (jumpCounter > 0.0f) {
 				playerVel = playerVel + (up * playerSpeed);
 				isJumping = true;
+				//PlayGameSound("data/jetpack2.wav");
+
 			}
 			else {
 				canJump = false;
@@ -484,7 +487,7 @@ void readScene(const char* fileName, std::vector<EntityMesh*>* vector) {
 }
 
 
-void loadLevel(Vector3 playerPos) {
+bool loadLevel(Vector3 playerPos) {
 	Vector3 coinPos[4] = {  //five levels, the first one will be like a tuto
 		Vector3(0,20,40),
 		Vector3(10,40,20),
@@ -512,6 +515,7 @@ void loadLevel(Vector3 playerPos) {
 	water->render();
 
 	if (playerPos.distance(coinPos[level]) < 1.0f) {  //check if player got the coin, then change the level
+		
 		if (level == (levels - 1)) {
 			staticObjects.clear();
 			SetStage(STAGE_ID::END);
@@ -521,7 +525,11 @@ void loadLevel(Vector3 playerPos) {
 			SetStage(STAGE_ID::EDITOR);
 		}
 		level = (level + 1) % levels;
+		//GUI::fillWaterSquare();
+		GUI::RenderGUI(65, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/blue_button07.png"));
+		return true;
 	}
+	return false;
 }
 
 HSAMPLE LoadSample(const char* fileName) {
