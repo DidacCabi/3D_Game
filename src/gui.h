@@ -18,8 +18,10 @@ class GUI {
 		static void RenderGUI(float start_x, float start_y, float w, float h, Vector4 color, Texture* tex);
 		static void RenderAllGUI();
 		static bool RenderButton(float x, float y, Texture* buttonTex);
-		//static void RenderIntroGUI();
+		static void RenderIntroGUI();
+		static void RenderLoadingGUI();
 		static void fillWaterSquare();
+		static void RenderEndWinGUI();
 };
 
 

@@ -88,7 +88,7 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	animShader = Shader::Get("data/shaders/skinning.vs", "data/shaders/texture.fs");
 
 	jetpack = new EntityMesh(Mesh::Get("data/Jetpack.obj"), Texture::Get("data/Jetpack_BaseColor.png"), shader, Vector4(1,1,1,1));
-	ground = new EntityMesh(Mesh::Get("data/platforms/ground.obj"), Texture::Get("data/platforms/ground.png"), shader, Vector4(1,1,1,1));
+	ground = new EntityMesh(Mesh::Get("data/platforms/ground.obj"), Texture::Get("data/platforms/sandTile.tga"), shader, Vector4(1,1,1,1));
 	sky = new EntityMesh(Mesh::Get("data/sky.ASE"), Texture::Get("data/sky.tga"), shader, Vector4(1, 1, 1, 1));
 	aiSun = new EntityMesh(Mesh::Get("data/sun_2.obj"), Texture::Get("data/color-atlas-new.png"), shader, Vector4(1,1,1,1));
 	wall = new EntityMesh(Mesh::Get("data/fence-big_8.obj"), Texture::Get("data/color-atlas-new.png"), shader, Vector4(1, 1, 1, 1));

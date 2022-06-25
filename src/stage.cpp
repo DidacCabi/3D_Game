@@ -51,24 +51,27 @@ STAGE_ID IntroStage::GetId() {
 	return STAGE_ID::INTRO;
 }
 void IntroStage::render() {
-	drawText((Game::instance->window_width / 2) - 280, Game::instance->window_height / 2, "INTRO STAGE", Vector3(1, 1, 1), 10.0f);
+	GUI::RenderIntroGUI();
 };
 void IntroStage::update(float seconds_elapsed) {
-	if (Input::isKeyPressed(SDL_SCANCODE_S)) {
-		SetStage((STAGE_ID)LOADING);
-	}
+
+	if (315 < Input::mouse_position.x  && Input::mouse_position.x < 485 && 360 < Input::mouse_position.y && Input::mouse_position.y < 440 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::LOADING);
+
 };
 
 
-
+float loadTimer = 1.0f;
 //Tutorial Stage methods
 STAGE_ID LoadingStage::GetId() {
 	return STAGE_ID::LOADING;
 }
 void LoadingStage::render() {
-	drawText((Game::instance->window_width / 2) - 290, Game::instance->window_height / 2, "LOADING STAGE", Vector3(1, 0.5, 1), 8.0f);
+	GUI::RenderLoadingGUI();
 };
-void LoadingStage::update(float seconds_elapsed) {};
+void LoadingStage::update(float seconds_elapsed) {
+	loadTimer -= seconds_elapsed;
+	if (loadTimer < 0.0f) SetStage(STAGE_ID::PLAY);
+};
 
 
 
@@ -83,7 +86,7 @@ void PlayStage::render() {
 		readScene("decorationScene.txt", &decoration);
 		readedDecoration = true;
 	}
-	ground->render(60.0f); //ground
+	ground->render(1.0f); //ground
 	sky->render();
 
 	if (cameraLocked) {
@@ -251,7 +254,7 @@ STAGE_ID EditorStage::GetId() {
 	return STAGE_ID::EDITOR;
 };
 void EditorStage::render() {
-	ground->render(60.0f);
+	ground->render(1.0f);
 
 	for (int i = 0; i < staticObjects.size(); i++) {
 		staticObjects[i]->mesh->renderBounding(staticObjects[i]->model);
@@ -391,7 +394,7 @@ STAGE_ID EndStage::GetId() {
 	return STAGE_ID::END;
 };
 void EndStage::render() {
-	drawText((Game::instance->window_width / 2) - 290, Game::instance->window_height / 2, "END STAGE", Vector3(0.6, 0.5, 1), 8.0f);
+	GUI::RenderEndWinGUI();
 };
 void EndStage::update(float seconds_elapsed) {};
 
