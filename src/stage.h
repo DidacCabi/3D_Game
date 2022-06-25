@@ -9,6 +9,7 @@
 #include "texture.h"
 #include "entityMesh.h"
 #include "animation.h"
+#include <bass.h>
 
 enum STAGE_ID {
 	INTRO,
@@ -18,7 +19,8 @@ enum STAGE_ID {
 	END
 };
 
-//float jumpCounter;
+HSAMPLE LoadSample(const char* fileName);
+void PlayGameSound(const char* fileName);
 
 class Stage {
 public:

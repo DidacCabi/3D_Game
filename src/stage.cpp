@@ -10,6 +10,7 @@
 #include <fstream>
 #include "gui.h"
 
+
 std::vector<Stage*> stages;
 
 STAGE_ID currentStage = STAGE_ID::INTRO;
@@ -494,3 +495,28 @@ void loadLevel(Vector3 playerPos) {
 		level = (level + 1) % levels;
 	}
 }
+
+HSAMPLE LoadSample(const char* fileName) {
+
+	HSAMPLE hSample;
+	hSample = BASS_SampleLoad(false, fileName, 0, 0, 3, 0);
+
+	if (hSample == 0) {
+		std::cout << "ERROR loading" << fileName << std::endl;
+	}
+	std::cout << "AUDIO loading" << fileName << std::endl;
+	return hSample;
+
+}
+
+void PlayGameSound(const char* fileName) {
+
+	HSAMPLE hSample = LoadSample(fileName);
+	HCHANNEL hSampleChannel;
+
+	hSampleChannel = BASS_SampleGetChannel(hSample, false);
+	BASS_ChannelPlay(hSampleChannel, true);
+
+
+}
+

@@ -100,10 +100,10 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	SDL_ShowCursor(!mouse_locked); //hide or show the mouse
 
 	//Inicializamos BASS al arrancar el juego (id_del_device, muestras por segundo, ...)
-	//if (BASS_Init(-1, 44100, 0, 0, NULL) == false) //-1 significa usar el por defecto del sistema operativo
-	//{
-	//	//error abriendo la tarjeta de sonido...
-	//}
+	if (BASS_Init(-1, 44100, 0, 0, NULL) == false) //-1 significa usar el por defecto del sistema operativo
+	{
+		std::cout << "ERROR initializing AUDIO" << std::endl;
+	}
 
 }
 
