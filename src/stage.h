@@ -54,7 +54,7 @@ public:
 	};
 	sPlayer playerStruct;	
 	
-	const float jumpTime = 2.5f;
+	const float jumpTime = 3.2f;
 	bool canJump = true;
 	bool isJumping = false;
 
