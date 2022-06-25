@@ -45,7 +45,7 @@ extern bool cameraLocked;
 
 int direction = 0;
 
-
+float introTime = 2.0f;
 //Introduction Stage methods
 STAGE_ID IntroStage::GetId() {
 	return STAGE_ID::INTRO;
@@ -54,13 +54,41 @@ void IntroStage::render() {
 	GUI::RenderIntroGUI();
 };
 void IntroStage::update(float seconds_elapsed) {
+	introTime -= seconds_elapsed;
+	if (introTime < 0) SetStage(STAGE_ID::MENU);
+};
 
-	if (315 < Input::mouse_position.x  && Input::mouse_position.x < 485 && 360 < Input::mouse_position.y && Input::mouse_position.y < 440 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::LOADING);
+
+//Introduction Stage methods
+STAGE_ID MenuStage::GetId() {
+	return STAGE_ID::MENU;
+}
+void MenuStage::render() {
+	GUI::RenderMenuGUI();
+};
+void MenuStage::update(float seconds_elapsed) {
+
+	if (315 < Input::mouse_position.x && Input::mouse_position.x < 485 && 260 < Input::mouse_position.y && Input::mouse_position.y < 340 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::PLAY);
+
+	if (315 < Input::mouse_position.x && Input::mouse_position.x < 485 && 360 < Input::mouse_position.y && Input::mouse_position.y < 440 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::TUTORIAL);
+
+};
+
+//Introduction Stage methods
+STAGE_ID TutoStage::GetId() {
+	return STAGE_ID::TUTORIAL;
+}
+void TutoStage::render() {
+	GUI::RenderTutoGUI();
+};
+void TutoStage::update(float seconds_elapsed) {
+
+	if (315 < Input::mouse_position.x && Input::mouse_position.x < 485 && 260 < Input::mouse_position.y && Input::mouse_position.y < 340 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::PLAY);
 
 };
 
 
-float loadTimer = 1.0f;
+float loadTimer = 0.8f;
 //Tutorial Stage methods
 STAGE_ID LoadingStage::GetId() {
 	return STAGE_ID::LOADING;
@@ -412,8 +440,10 @@ void SetStage(STAGE_ID id) {
 };
 
 void InitStages() {
-	stages.reserve(4);
+	stages.reserve(5);
 	stages.push_back(new IntroStage());
+	stages.push_back(new MenuStage());
+	stages.push_back(new TutoStage());
 	stages.push_back(new LoadingStage());
 	stages.push_back(new PlayStage());
 	stages.push_back(new EditorStage());

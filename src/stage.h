@@ -13,6 +13,8 @@
 
 enum STAGE_ID {
 	INTRO,
+	MENU,
+	TUTORIAL,
 	LOADING,
 	PLAY,
 	EDITOR,
@@ -31,6 +33,20 @@ public:
 };
 
 class IntroStage : public Stage {
+public:
+	STAGE_ID GetId();
+	void render();
+	void update(float seconds_elapsed);
+};
+
+class MenuStage : public Stage {
+public:
+	STAGE_ID GetId();
+	void render();
+	void update(float seconds_elapsed);
+};
+
+class TutoStage : public Stage {
 public:
 	STAGE_ID GetId();
 	void render();

@@ -114,8 +114,43 @@ void GUI::RenderIntroGUI() {
 	int height = Game::instance->window_height;
 
 	RenderGUI(width / 2, height / 2, width, height, Vector4(1, 1, 1, 1), Texture::Get("data/UI/background.tga"));
-	RenderGUI(width / 2, 200, 576, 77, Vector4(1, 1, 1, 1), Texture::Get("data/UI/tittle.png"));
-	RenderGUI(width/2, (height / 2) + 100, 165, 74, Vector4(1, 1, 1, 1), Texture::Get("data/UI/button_play.png"));
+	RenderGUI(width / 2, 300, 576, 77, Vector4(1, 1, 1, 1), Texture::Get("data/UI/tittle.png"));
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glDisable(GL_BLEND);
+}
+
+void GUI::RenderMenuGUI() {
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	int width = Game::instance->window_width;
+	int height = Game::instance->window_height;
+
+	RenderGUI(width / 2, height / 2, width, height, Vector4(1, 1, 1, 1), Texture::Get("data/UI/background.tga"));
+	RenderGUI(width / 2, height / 2, 165, 74, Vector4(1, 1, 1, 1), Texture::Get("data/UI/button_play.png"));
+	RenderGUI(width / 2, (height / 2) + 100, 165, 74, Vector4(1, 1, 1, 1), Texture::Get("data/UI/how.png"));
+
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glDisable(GL_BLEND);
+}
+
+void GUI::RenderTutoGUI() {
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	int width = Game::instance->window_width;
+	int height = Game::instance->window_height;
+
+	RenderGUI(width / 2, height / 2, width, height, Vector4(1, 1, 1, 1), Texture::Get("data/UI/background.tga"));
+	RenderGUI(width / 2, height / 2, 165, 74, Vector4(1, 1, 1, 1), Texture::Get("data/UI/button_play.png"));
+	RenderGUI(width / 2, (height / 2) + 100, 600, 100, Vector4(1, 1, 1, 1), Texture::Get("data/UI/text.png"));
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);

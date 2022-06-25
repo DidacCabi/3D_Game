@@ -19,6 +19,8 @@ class GUI {
 		static void RenderAllGUI();
 		static bool RenderButton(float x, float y, Texture* buttonTex);
 		static void RenderIntroGUI();
+		static void RenderMenuGUI();
+		static void RenderTutoGUI();
 		static void RenderLoadingGUI();
 		static void fillWaterSquare();
 		static void RenderEndWinGUI();
