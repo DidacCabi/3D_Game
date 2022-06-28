@@ -175,7 +175,11 @@ void Game::update(double seconds_elapsed)
 	
 
 	if (Input::wasKeyPressed(SDL_SCANCODE_P)) { 
-		int nextStageIndex = ((int)currentStage + 1) % stages.size();
+		int nextStageIndex;
+		if (currentStage == STAGE_ID::PLAY) nextStageIndex = (int)STAGE_ID::EDITOR;    //when playing allow only movement beetween play and editor
+		else if(currentStage == STAGE_ID::EDITOR) nextStageIndex = (int)STAGE_ID::PLAY;
+		else nextStageIndex = ((int)currentStage + 1) % stages.size();
+
 		SetStage((STAGE_ID)nextStageIndex);
 	}
 	//to navigate with the mouse fixed in the middle

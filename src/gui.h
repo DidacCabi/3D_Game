@@ -23,7 +23,7 @@ class GUI {
 		static void RenderTutoGUI();
 		static void RenderLoadingGUI();
 		static void fillWaterSquare();
-		static void RenderEndWinGUI();
+		static void RenderEndWinGUI(bool isWin);
 };
 
 

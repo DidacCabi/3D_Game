@@ -13,7 +13,7 @@
 
 std::vector<Stage*> stages;
 
-STAGE_ID currentStage = STAGE_ID::INTRO;
+STAGE_ID currentStage = STAGE_ID::END;
 
 int level = 0;
 int levels = 4;
@@ -67,10 +67,13 @@ void MenuStage::render() {
 	GUI::RenderMenuGUI();
 };
 void MenuStage::update(float seconds_elapsed) {
+	
+	float mouseX = Input::mouse_position.x;
+	float mouseY = Input::mouse_position.y;
 
-	if (315 < Input::mouse_position.x && Input::mouse_position.x < 485 && 260 < Input::mouse_position.y && Input::mouse_position.y < 340 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::PLAY);
+	if (315 < mouseX && mouseX < 485 && 260 < mouseY && mouseY < 340 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::PLAY);
 
-	if (315 < Input::mouse_position.x && Input::mouse_position.x < 485 && 360 < Input::mouse_position.y && Input::mouse_position.y < 440 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::TUTORIAL);
+	if (315 < mouseX && mouseX < 485 && 360 < mouseY && mouseY < 440 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::TUTORIAL);
 
 };
 
@@ -83,7 +86,10 @@ void TutoStage::render() {
 };
 void TutoStage::update(float seconds_elapsed) {
 
-	if (315 < Input::mouse_position.x && Input::mouse_position.x < 485 && 260 < Input::mouse_position.y && Input::mouse_position.y < 340 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::PLAY);
+	float mouseX = Input::mouse_position.x;
+	float mouseY = Input::mouse_position.y;
+
+	if (315 < mouseX && mouseX < 485 && 260 < mouseY && mouseY < 340 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::PLAY);
 
 };
 
@@ -422,9 +428,13 @@ STAGE_ID EndStage::GetId() {
 	return STAGE_ID::END;
 };
 void EndStage::render() {
-	GUI::RenderEndWinGUI();
+	GUI::RenderEndWinGUI(true);
 };
-void EndStage::update(float seconds_elapsed) {};
+void EndStage::update(float seconds_elapsed) {
+	float mouseX = Input::mouse_position.x;
+	float mouseY = Input::mouse_position.y;
+	if (275 < mouseX && mouseX < 525 && 515 < mouseY && mouseY < 585 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::INTRO);
+};
 
 
 Stage* GetStage(STAGE_ID id) {

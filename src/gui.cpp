@@ -149,8 +149,13 @@ void GUI::RenderTutoGUI() {
 	int height = Game::instance->window_height;
 
 	RenderGUI(width / 2, height / 2, width, height, Vector4(1, 1, 1, 1), Texture::Get("data/UI/background.tga"));
-	RenderGUI(width / 2, height / 2, 165, 74, Vector4(1, 1, 1, 1), Texture::Get("data/UI/button_play.png"));
-	RenderGUI(width / 2, (height / 2) + 100, 600, 100, Vector4(1, 1, 1, 1), Texture::Get("data/UI/text.png"));
+	RenderGUI(width / 2, (height / 2) - 100, 165, 74, Vector4(1, 1, 1, 1), Texture::Get("data/UI/button_play.png"));
+	RenderGUI(100, 500, 200, 200, Vector4(1, 1, 1, 1), Texture::Get("data/UI/wasd.tga"));
+	RenderGUI(330, 500, 200, 200, Vector4(1, 1, 1, 1), Texture::Get("data/UI/p.png"));
+	RenderGUI(width / 2, (height / 2), 600, 100, Vector4(1, 1, 1, 1), Texture::Get("data/UI/text.png"));
+	drawText(30,550,"To move", Vector3(0,0,0), 3.0f);
+	drawText(250, 530, "To change between", Vector3(0, 0, 0), 1.5f);
+	drawText(260, 550, "play and editor", Vector3(0,0,0), 1.5f);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -174,7 +179,7 @@ void GUI::RenderLoadingGUI() {
 }
 
 
-void GUI::RenderEndWinGUI() {
+void GUI::RenderEndWinGUI(bool isWin) {
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
@@ -183,8 +188,16 @@ void GUI::RenderEndWinGUI() {
 	int width = Game::instance->window_width;
 	int height = Game::instance->window_height;
 
-	RenderGUI(width / 2, height / 2, width, height, Vector4(1, 1, 1, 1), Texture::Get("data/UI/pool.tga"));
-	RenderGUI(width / 2, height / 2, 582, 145, Vector4(1, 1, 1, 1), Texture::Get("data/UI/win.png"));
+	if (isWin) {
+		RenderGUI(width / 2, height / 2, width, height, Vector4(1, 1, 1, 1), Texture::Get("data/UI/pool.tga"));
+		RenderGUI(width / 2, height / 2, 582, 145, Vector4(1, 1, 1, 1), Texture::Get("data/UI/win.png"));
+	}
+	else {
+		RenderGUI(width / 2, height / 2, width, height, Vector4(1, 1, 1, 1), Texture::Get("data/UI/lose.tga"));
+		RenderGUI(width / 2, (height / 2)-50, 322, 90, Vector4(1, 1, 1, 1), Texture::Get("data/UI/loseText.png"));
+	}
+
+	RenderGUI(width / 2, (height / 2) + 250, 245, 71, Vector4(1, 1, 1, 1), Texture::Get("data/UI/playAgain.png"));
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
