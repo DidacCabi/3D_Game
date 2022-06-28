@@ -22,6 +22,7 @@ extern bool wasLeftMousePressed;
 EntityMesh* sky;
 EntityMesh* ground;
 EntityMesh* wall;
+EntityMesh* fence;
 
 EntityMesh* jetpack;
 EntityMesh* npc;
@@ -38,11 +39,12 @@ Mesh* playerObj = NULL;
 Mesh* playerMesh = NULL;
 Texture* playerTex = NULL;
 
-bool cameraLocked = true;
-
 Animation* dance;
 Animation* walk;
 Animation* idle;
+Animation* point;
+
+bool cameraLocked = true;
 
 float angle = 0;
 float mouse_speed = 100.0f;
@@ -77,11 +79,11 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 
 	//loading Mesh from Mesh Manager
 	playerObj = Mesh::Get("data/Chr_Dungeon_Skeleton_01_34.obj");
-	playerMesh = Mesh::Get("data/animations/dance.mesh");
 	playerTex = Texture::Get("data/PolygonMinis_Texture.png");
-	dance = Animation::Get("data/animations/dance.skanim");
-	walk = Animation::Get("data/animations/walk.skanim");
-	idle = Animation::Get("data/animations/idle.skanim");
+	Animation* dance = Animation::Get("data/animations/dance.skanim");
+	Animation* walk = Animation::Get("data/animations/walk.skanim");
+	Animation* idle = Animation::Get("data/animations/idle.skanim");
+	Animation* point = Animation::Get("data/animations/point.skanim");
 	
 	// example of shader loading using the shaders manager
 	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
@@ -92,11 +94,12 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	sky = new EntityMesh(Mesh::Get("data/sky.ASE"), Texture::Get("data/sky.tga"), shader, Vector4(1, 1, 1, 1));
 	aiSun = new EntityMesh(Mesh::Get("data/sun_2.obj"), Texture::Get("data/color-atlas-new.png"), shader, Vector4(1,1,1,1));
 	wall = new EntityMesh(Mesh::Get("data/fence-big_8.obj"), Texture::Get("data/color-atlas-new.png"), shader, Vector4(1, 1, 1, 1));
+	fence = new EntityMesh(Mesh::Get("data/decoration/fence.obj"), Texture::Get("data/color-atlas-new.png"), shader, Vector4(1, 1, 1, 1));
 
 	staticObjects.reserve(50);
 
 	player = new EntityMesh(playerObj, playerTex, shader, Vector4(1, 1, 1, 1));
-	npc = new EntityMesh(playerMesh, playerTex, animShader, Vector4(1, 1, 1, 1), "", "", walk);
+	npc = new EntityMesh(Mesh::Get("data/npc.mesh") , playerTex, animShader, Vector4(1, 1, 1, 1), "", "", point);
 
 	//hide the cursor
 	SDL_ShowCursor(!mouse_locked); //hide or show the mouse

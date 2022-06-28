@@ -30,6 +30,7 @@ extern EntityMesh* jetpack;
 extern EntityMesh* aiSun;
 extern EntityMesh* npc;
 extern EntityMesh* wall;
+extern EntityMesh* fence;
 
 extern Animation* idle;
 extern Animation* walk;
@@ -71,7 +72,7 @@ void MenuStage::update(float seconds_elapsed) {
 	float mouseX = Input::mouse_position.x;
 	float mouseY = Input::mouse_position.y;
 
-	if (315 < mouseX && mouseX < 485 && 260 < mouseY && mouseY < 340 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::PLAY);
+	if (315 < mouseX && mouseX < 485 && 260 < mouseY && mouseY < 340 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::LOADING);
 
 	if (315 < mouseX && mouseX < 485 && 360 < mouseY && mouseY < 440 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::TUTORIAL);
 
@@ -89,7 +90,7 @@ void TutoStage::update(float seconds_elapsed) {
 	float mouseX = Input::mouse_position.x;
 	float mouseY = Input::mouse_position.y;
 
-	if (315 < mouseX && mouseX < 485 && 260 < mouseY && mouseY < 340 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::PLAY);
+	if (315 < mouseX && mouseX < 485 && 260 < mouseY && mouseY < 340 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::LOADING);
 
 };
 
@@ -115,6 +116,11 @@ STAGE_ID PlayStage::GetId() {
 void PlayStage::render() {
 
 	if (level == (levels - 1)) aiSun->render();
+	if (level == 2) {              //npc pointing the right direction
+		npc->model.setScale(0.01f, 0.01f, 0.01f);
+		npc->model.rotate(-90 * DEG2RAD, Vector3(0, 1, 0));
+		npc->render();
+	}
 
 	if (!readedDecoration) {   //decoration
 		readScene("decorationScene.txt", &decoration);
@@ -152,12 +158,6 @@ void PlayStage::render() {
 	playerStruct.scale = 0.1f;
 	player->render();
 
-	Matrix44 npcModel;
-	npcModel.scale(0.1f, 0.1f, 0.1f);
-	npcModel.translate(200, 0, 1050);
-	npc->model = npcModel;
-	npc->render();
-	npc->mesh->renderBounding(npc->model);
 
 	jetpack->render();
 	GUI::RenderAllGUI();
@@ -553,6 +553,30 @@ bool loadLevel(Vector3 playerPos) {
 		wall3.model.setTranslation(-9, 0, -10);
 		wall3.render();
 	}
+	if (level == 2) {
+		float distanceBetweenFences = 5.2f;
+		fence->model.setTranslation(-5, 0, 0);
+		fence->render();
+		EntityMesh fence1 = *fence;
+		fence1.model.setTranslation(-5, 0, distanceBetweenFences);
+		fence1.render();
+		EntityMesh fence2 = *fence;
+		fence2.model.setTranslation(-5, 0, distanceBetweenFences*2);
+		fence2.render();
+
+		EntityMesh fenceLeft = *fence;
+		fenceLeft.model.setTranslation(10, 0, 0);
+		fenceLeft.model.rotate(180 * DEG2RAD, Vector3(0, 1, 0));
+		fenceLeft.render();
+		EntityMesh fenceLeft1 = *fence;
+		fenceLeft1.model.setTranslation(10, 0, distanceBetweenFences);
+		fenceLeft1.model.rotate(180 * DEG2RAD, Vector3(0, 1, 0));
+		fenceLeft1.render();
+		EntityMesh fenceLeft2 = *fence;
+		fenceLeft2.model.setTranslation(10, 0, distanceBetweenFences*2);
+		fenceLeft2.model.rotate(180 * DEG2RAD, Vector3(0, 1, 0));
+		fenceLeft2.render();
+	}
 
 	water->model.setTranslationVec(coinPos[level]);
 	water->render();
@@ -595,7 +619,6 @@ void PlayGameSound(const char* fileName) {
 
 	hSampleChannel = BASS_SampleGetChannel(hSample, false);
 	BASS_ChannelPlay(hSampleChannel, true);
-
 
 }
 
