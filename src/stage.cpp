@@ -13,7 +13,7 @@
 
 std::vector<Stage*> stages;
 
-STAGE_ID currentStage = STAGE_ID::END;
+STAGE_ID currentStage = STAGE_ID::INTRO;
 
 int level = 0;
 int levels = 4;
