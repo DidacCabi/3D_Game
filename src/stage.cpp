@@ -44,6 +44,7 @@ Matrix44 playerModel;
 
 bool lvl2isLoaded = false;
 bool isWin = false;
+bool menuSong = false;
 
 bool mouse_locked;
 extern bool cameraLocked;
@@ -59,6 +60,10 @@ void IntroStage::render() {
 	GUI::RenderIntroGUI();
 };
 void IntroStage::update(float seconds_elapsed) {
+	if (!menuSong) {
+		PlayGameSound("data/ost.wav");
+		menuSong = true;
+	}
 	introTime -= seconds_elapsed;
 	if (introTime < 0) SetStage(STAGE_ID::MENU);
 };
@@ -455,6 +460,7 @@ void EndStage::update(float seconds_elapsed) {
 		lvl2isLoaded = false;    //reset variables
 		loadTimer = 0.8f;
 		isWin = false;
+		menuSong = false;
 		SetStage(STAGE_ID::INTRO); //return to the intro stage
 	}
 };
