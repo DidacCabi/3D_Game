@@ -93,8 +93,7 @@ void TutoStage::update(float seconds_elapsed) {
 
 	float mouseX = Input::mouse_position.x;
 	float mouseY = Input::mouse_position.y;
-
-	if (315 < mouseX && mouseX < 485 && 260 < mouseY && mouseY < 340 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::LOADING);
+	if (318 < mouseX && mouseX < 482 && 160 < mouseY && mouseY < 240 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::LOADING);
 
 };
 
