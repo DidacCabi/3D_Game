@@ -22,8 +22,8 @@ enum STAGE_ID {
 };
 
 
-HSAMPLE LoadSample(const char* fileName);
-void PlayGameSound(const char* fileName);
+HSAMPLE LoadSample(const char* fileName, bool loop);
+HCHANNEL PlayGameSound(const char* fileName, bool loop);
 
 class Stage {
 public:

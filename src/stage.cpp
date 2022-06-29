@@ -51,6 +51,10 @@ extern bool cameraLocked;
 
 int direction = 0;
 
+HCHANNEL ostChannel;
+HCHANNEL lvls123SongChannel;
+HCHANNEL lvl4SongChannel;
+
 float introTime = 2.0f;
 //Introduction Stage methods
 STAGE_ID IntroStage::GetId() {
@@ -61,7 +65,7 @@ void IntroStage::render() {
 };
 void IntroStage::update(float seconds_elapsed) {
 	if (!menuSong) {
-		PlayGameSound("data/ost.wav");
+		ostChannel = PlayGameSound("data/ost.wav", true);
 		menuSong = true;
 	}
 	introTime -= seconds_elapsed;
@@ -81,7 +85,11 @@ void MenuStage::update(float seconds_elapsed) {
 	float mouseX = Input::mouse_position.x;
 	float mouseY = Input::mouse_position.y;
 
-	if (315 < mouseX && mouseX < 485 && 260 < mouseY && mouseY < 340 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::LOADING);
+	if (315 < mouseX && mouseX < 485 && 260 < mouseY && mouseY < 340 && (Input::mouse_state & SDL_BUTTON_LEFT)) {
+		BASS_ChannelStop(ostChannel);
+		lvls123SongChannel = PlayGameSound("data/level1_2_3.wav",true);
+		SetStage(STAGE_ID::LOADING);
+	}
 
 	if (315 < mouseX && mouseX < 485 && 360 < mouseY && mouseY < 440 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::TUTORIAL);
 
@@ -98,7 +106,11 @@ void TutoStage::update(float seconds_elapsed) {
 
 	float mouseX = Input::mouse_position.x;
 	float mouseY = Input::mouse_position.y;
-	if (318 < mouseX && mouseX < 482 && 160 < mouseY && mouseY < 240 && (Input::mouse_state & SDL_BUTTON_LEFT)) SetStage(STAGE_ID::LOADING);
+	if (318 < mouseX && mouseX < 482 && 160 < mouseY && mouseY < 240 && (Input::mouse_state & SDL_BUTTON_LEFT)) {
+		BASS_ChannelStop(ostChannel);
+		lvls123SongChannel = PlayGameSound("data/level1_2_3.wav", true);
+		SetStage(STAGE_ID::LOADING);
+	}
 
 };
 
@@ -644,11 +656,18 @@ bool loadLevel(Vector3 playerPos) {
 
 	if (playerPos.distance(coinPos[level]) < 1.0f) {  //check if player got the coin, then change the level
 		
+		if (level == 2) {
+			BASS_ChannelStop(lvls123SongChannel);
+			lvl4SongChannel = PlayGameSound("data/level4.wav",true);
+		}
 		if (level == (levels - 1)) {
 			staticObjects.clear();
 			isWin = true;
 			SetStage(STAGE_ID::END);
 			aiSun->model.setTranslation(0, 10, -20);
+			BASS_ChannelStop(lvl4SongChannel);
+			if (isWin) PlayGameSound("data/win.wav", false);
+			else PlayGameSound("data/game_over.wav", false);
 		}
 		else {
 			staticObjects.clear();
@@ -663,26 +682,31 @@ bool loadLevel(Vector3 playerPos) {
 	return false;
 }
 
-HSAMPLE LoadSample(const char* fileName) {
+HSAMPLE LoadSample(const char* fileName, bool loop) {
 
 	HSAMPLE hSample;
-	hSample = BASS_SampleLoad(false, fileName, 0, 0, 3, 0);
+	if(loop)
+		hSample = BASS_SampleLoad(false, fileName, 0, 0, 3, BASS_SAMPLE_LOOP);
+	else
+		hSample = BASS_SampleLoad(false, fileName, 0, 0, 3, 0);
 
 	if (hSample == 0) {
-		std::cout << "ERROR loading" << fileName << std::endl;
+		std::cout << "ERROR loading " << fileName << std::endl;
 	}
-	std::cout << "AUDIO loading" << fileName << std::endl;
+	std::cout << "AUDIO loading " << fileName << std::endl;
 	return hSample;
 
 }
 
-void PlayGameSound(const char* fileName) {
+HCHANNEL PlayGameSound(const char* fileName, bool loop) {
 
-	HSAMPLE hSample = LoadSample(fileName);
+	HSAMPLE hSample = LoadSample(fileName, loop);
+	
 	HCHANNEL hSampleChannel;
 
 	hSampleChannel = BASS_SampleGetChannel(hSample, false);
 	BASS_ChannelPlay(hSampleChannel, true);
 
+	return hSampleChannel;
 }
 
