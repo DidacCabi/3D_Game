@@ -28,7 +28,7 @@ Vector3 Collision::testSidePlayerColl(EntityMesh* player, Vector3 playerPos, Vec
 	{
 		EntityMesh* platform = staticObjects[i];
 
-		if (level == 4) {
+		if (level == 3) {
 			Vector3 sunColl, sunCollnorm;
 			if (aiSun->mesh->testSphereCollision(aiSun->model, platform->getPosition(), 1.5f, sunColl, sunCollnorm)) {
 				staticObjects.erase(staticObjects.begin() + i);

@@ -63,13 +63,6 @@ public:
 class PlayStage : public Stage {
 public:
 	bool readedDecoration = false;
-
-	struct sPlayer {
-		Vector3 pos;
-		float yaw;
-		float scale;
-	};
-	sPlayer playerStruct;
 	const float jumpTime = 3.2f;
 	bool canJump = true;
 	bool isJumping = false;
@@ -92,7 +85,6 @@ public:
 	STAGE_ID GetId();
 	void render();
 	void update(float seconds_elapsed);
-	void onKeyDown(SDL_KeyboardEvent event);
 	void renderInFront(std::string meshPath, std::string texPath);
 	void selectObject();
 };
@@ -117,6 +109,13 @@ enum PLAYER_DIR {
 	RIGHT = 1,
 	LEFT = 2,
 	UP = 3
+};
+
+
+struct sPlayer {
+	Vector3 pos;
+	float yaw;
+	float scale;
 };
 
 //struct sPlayer {

@@ -32,8 +32,9 @@ void AI::following_AI(float seconds_elapsed) {   //orient and move the sun towar
 	if (fwdDot < 0.98f) {
 		sun.yaw += sign(sideDot) * 120.0f * seconds_elapsed;
 	}
-	if (dist > 4.0f) {
-		sun.pos = sun.pos + (forward * 10.0f * seconds_elapsed);
+	if (dist > 0.5f) {
+		float sunVelocity = 5.0f;
+		sun.pos = sun.pos + (forward * sunVelocity * seconds_elapsed);
 	}
 	if (toTarget.y > 0.2f || toTarget.y < -0.2f) {
 		sun.pos.y = sun.pos.y + (sign(updownDot) * seconds_elapsed * 10.0f);
