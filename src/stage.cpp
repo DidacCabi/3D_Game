@@ -473,6 +473,7 @@ void EndStage::update(float seconds_elapsed) {
 		isWin = false;
 		menuSong = false;
 		level = 0;
+		staticObjects.clear();
 		SetStage(STAGE_ID::INTRO); //return to the intro stage
 	}
 };
@@ -512,6 +513,7 @@ void cameraMove(Camera* camera, float speed) {
 	if (Input::isKeyPressed(SDL_SCANCODE_Q)) camera->move(Vector3(0.0f, 1.0f, 0.0f) * speed);
 }
 void saveScene(const char* fileName) {
+
 	std::ofstream myfile;
 	printf("\nCreating file to save the actual editor scene...\n");
 	myfile.open(fileName);
@@ -689,7 +691,6 @@ void loadLevel(Vector3 playerPos) {
 			else PlayGameSound("data/game_over.wav", false);
 		}
 		else {
-			staticObjects.clear();
 			SetStage(STAGE_ID::EDITOR);
 		}
 
