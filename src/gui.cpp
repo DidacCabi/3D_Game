@@ -90,16 +90,16 @@ void GUI::fillWaterSquare(int level) {   //it will indicate which level is
 
 	switch(level){
 	case 1:
-		RenderGUI(65, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/blue_button07.png"));
+		RenderGUI(65, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/UI/blue_button07.png"));
 		break;
 	case 2:
-		RenderGUI(65, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/blue_button07.png"));
-		RenderGUI(90, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/blue_button07.png"));
+		RenderGUI(65, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/UI/blue_button07.png"));
+		RenderGUI(90, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/UI/blue_button07.png"));
 		break;
 	case 3:
-		RenderGUI(65, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/blue_button07.png"));
-		RenderGUI(90, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/blue_button07.png"));
-		RenderGUI(115, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/blue_button07.png"));
+		RenderGUI(65, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/UI/blue_button07.png"));
+		RenderGUI(90, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/UI/blue_button07.png"));
+		RenderGUI(115, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/UI/blue_button07.png"));
 		break;
 	}
 
