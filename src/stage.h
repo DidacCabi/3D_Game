@@ -118,13 +118,6 @@ struct sPlayer {
 	float scale;
 };
 
-//struct sPlayer {
-//	Vector2 pos;
-//	bool isMoving;
-//	PLAYER_DIR dir;
-//	bool isDead = 0;
-//};
-
 
 void GroundRendering();
 void saveScene(const char* fileName);
