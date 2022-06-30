@@ -282,6 +282,7 @@ void PlayStage::update(float seconds_elapsed) {
 		if (aiSun->mesh->testSphereCollision(aiSun->model, player->getPosition(), 1.5f, sunColl, sunCollnorm)) {  //check sun killing skeleton
 			isWin = false;
 			aiSun->model.setTranslation(0, 10, -20);
+			BASS_ChannelStop(lvl4SongChannel);
 			SetStage(STAGE_ID::END);
 		}
 
