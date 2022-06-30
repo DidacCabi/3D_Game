@@ -18,19 +18,22 @@ STAGE_ID currentStage = STAGE_ID::INTRO;
 int level = 0;
 int levels = 4;
 float jumpCounter;
-//sPlayer playerStruct;
 
 extern Shader* shader;
 extern std::vector<EntityMesh*> platforms;
 extern std::vector<EntityMesh*> staticObjects;
 
 extern EntityMesh* ground;
+extern EntityMesh* lavaGround;
 extern EntityMesh* sky;
 extern EntityMesh* jetpack;
 extern EntityMesh* aiSun;
 extern EntityMesh* npc;
+extern EntityMesh* finalnpc;
 extern EntityMesh* wall;
 extern EntityMesh* fence;
+extern EntityMesh* pool;
+extern EntityMesh* volcano;
 
 extern Animation* idle;
 extern Animation* walk;
@@ -42,14 +45,13 @@ extern EntityMesh* player;
 sPlayer playerStruct;
 Matrix44 playerModel;
 
-bool lvl2isLoaded = false;
+bool lvl3isLoaded = false;
 bool isWin = false;
 bool menuSong = false;
 
 bool mouse_locked;
 extern bool cameraLocked;
 
-int direction = 0;
 
 HCHANNEL ostChannel;
 HCHANNEL lvls123SongChannel;
@@ -147,7 +149,12 @@ void PlayStage::render() {
 		readScene("decorationScene.txt", &decoration);
 		readedDecoration = true;
 	}
-	ground->render(1.0f); //ground
+
+	if (level == 2)  //ground
+		lavaGround->render(100.0f);
+	else
+		ground->render(80.0f); 
+
 	sky->render();
 
 	if (cameraLocked) {
@@ -187,10 +194,9 @@ void PlayStage::render() {
 
 
 	jetpack->render();
-	GUI::RenderAllGUI();
+	GUI::RenderAllGUI(canJump);
 	GUI::fillWaterSquare(level);
 
-	drawText(Game::instance->window_width - 340, 20, "level " + std::to_string(level), Vector3(1, 1, 1), 3.0f);
 };
 void PlayStage::update(float seconds_elapsed) {
 
@@ -222,20 +228,16 @@ void PlayStage::update(float seconds_elapsed) {
 		float playerSpeed = 10.0f * seconds_elapsed;
 		if (Input::isKeyPressed(SDL_SCANCODE_W)) {
 			playerVel = playerVel - (forward * playerSpeed);
-			direction = 0;
 		}
 		if (Input::isKeyPressed(SDL_SCANCODE_S)) {
 			playerVel = playerVel + (forward * playerSpeed);
-			direction = 1;
 		}
 
 		if (Input::isKeyPressed(SDL_SCANCODE_A)) {
 			playerVel = playerVel + (right * playerSpeed);
-			direction = 2;
 		}
 		if (Input::isKeyPressed(SDL_SCANCODE_D)) {
 			playerVel = playerVel - (right * playerSpeed);
-			direction = 3;
 		}
 
 		if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && canJump) {   //jump
@@ -244,31 +246,14 @@ void PlayStage::update(float seconds_elapsed) {
 				playerVel = playerVel + (up * playerSpeed);
 				isJumping = true;
 				//PlayGameSound("data/jetpack2.wav");
-
 			}
 			else {
 				canJump = false;
 				jumpCounter = jumpTime;
+				if (level == 3) jumpCounter = 1.0f;
 			}
 		}
 
-		if (Input::wasKeyPressed(SDL_SCANCODE_E)) {   //Dash
-			float boost = 10.0f;
-			switch (direction) {
-			case 0:
-				playerVel = playerVel - (forward * boost);
-				break;
-			case 1:
-				playerVel = playerVel + (forward * boost);
-				break;
-			case 2:
-				playerVel = playerVel + (right * boost);
-				break;
-			case 3:
-				playerVel = playerVel - (right * boost);
-				break;
-			}
-		}
 	}
 	else {
 		//async input to move the camera around
@@ -289,6 +274,7 @@ void PlayStage::update(float seconds_elapsed) {
 	if (playerStruct.pos.y < 0.2f || Collision::testBelowPlayerColl(player)) {
 		canJump = true;
 		jumpCounter = jumpTime;
+		if (level == 3) jumpCounter = 1.0f;
 	}
 
 	Vector3 sunColl, sunCollnorm;
@@ -302,6 +288,12 @@ void PlayStage::update(float seconds_elapsed) {
 	Vector3 nextPos = playerStruct.pos + playerVel;
 	if (!Collision::testBelowPlayerColl(player)) nextPos = Collision::testSidePlayerColl(player, playerStruct.pos, nextPos, seconds_elapsed, aiSun, level);
 	if (nextPos.y < 0.1f) nextPos.y = 0.1f;
+	if (nextPos.y < 0.2f && level == 2) { 
+		isWin = false;
+		PlayGameSound("data/game_over.wav", false);
+		BASS_ChannelStop(lvls123SongChannel);
+		SetStage(STAGE_ID::END); 
+	}
 	if (level == 1){ 
 		nextPos.x = clamp(nextPos.x, -9, 27);
 		nextPos.z = clamp(nextPos.z, -9, 28);
@@ -329,7 +321,14 @@ STAGE_ID EditorStage::GetId() {
 	return STAGE_ID::EDITOR;
 };
 void EditorStage::render() {
-	ground->render(1.0f);
+
+	player->render();
+	jetpack->render();
+
+	if (level == 2)  //ground
+		lavaGround->render(50.0f);
+	else
+		ground->render(80.0f);
 
 	for (int i = 0; i < staticObjects.size(); i++) {
 		staticObjects[i]->mesh->renderBounding(staticObjects[i]->model);
@@ -338,7 +337,6 @@ void EditorStage::render() {
 	loadLevel(Vector3(0,0,0));
 
 	drawText(Game::instance->window_width - 180, 10, "platforms left: " + std::to_string(objectsLeft[level]), Vector3(1, 1, 1), 2.0f);
-	drawText(Game::instance->window_width - 340, 20, "level " + std::to_string(level), Vector3(1, 1, 1), 3.0f);
 };
 void EditorStage::update(float seconds_elapsed) {
 
@@ -470,10 +468,11 @@ void EndStage::update(float seconds_elapsed) {
 	float mouseX = Input::mouse_position.x;
 	float mouseY = Input::mouse_position.y;
 	if (275 < mouseX && mouseX < 525 && 515 < mouseY && mouseY < 585 && (Input::mouse_state & SDL_BUTTON_LEFT)) { 
-		lvl2isLoaded = false;    //reset variables
+		lvl3isLoaded = false;    //reset variables
 		loadTimer = 0.8f;
 		isWin = false;
 		menuSong = false;
+		level = 0;
 		SetStage(STAGE_ID::INTRO); //return to the intro stage
 	}
 };
@@ -570,12 +569,12 @@ void readScene(const char* fileName, std::vector<EntityMesh*>* vector) {
 	else std::cout << "\n[!]Unable to open file";
 }
 
-bool loadLevel(Vector3 playerPos) {
+void loadLevel(Vector3 playerPos) {
 	Vector3 coinPos[4] = {  //five levels, the first one will be like a tuto
 		Vector3(0,20,40),
 		Vector3(10,40,20),
-		Vector3(0,0,10),
-		Vector3(-2,10,92)
+		Vector3(0,10,100),
+		Vector3(2,15,180)
 	};
 	EntityMesh* water = new EntityMesh(NULL, NULL, shader, Vector4(1, 1, 1, 1), "data/decoration/rain.obj", "data/color-atlas-new.png", NULL);
 
@@ -593,14 +592,18 @@ bool loadLevel(Vector3 playerPos) {
 		wall3.model.setTranslation(-9, 0, -10);
 		wall3.render();
 	}
+	if (level == 2) {
+		volcano->model.setTranslation(0, 0, 300);
+		volcano->render();
+	}
 	if (level == 3) {
 		float distanceBetweenFences = 5.2f;
 		fence->model.setTranslation(-5, 0, 0);
 		fence->render();
 
 
-		EntityMesh* fences[105];
-		for (size_t i = 0; i < 100; i+=4)
+		EntityMesh* fences[155];
+		for (size_t i = 0; i < 150; i+=4)
 		{
 			EntityMesh fenceAux = *fence;
 			fences[i] = &fenceAux;
@@ -625,20 +628,23 @@ bool loadLevel(Vector3 playerPos) {
 			fences[i + 3]->render();
 		}
 
-		if (!lvl2isLoaded) {    //load level 2 blocks, done only once
+		if (!lvl3isLoaded) {    //load level 3 blocks, done only once
 
-			const int blocksSize = 10;
+			const int blocksSize = 13;
 			Vector3 blocksPos[blocksSize] = {
 				Vector3(0,0,10),
 				Vector3(2,3,15),
 				Vector3(0,7,20),
 				Vector3(-2,10,35),
-				Vector3(4,10,45),
-				Vector3(1,5,60),
-				Vector3(2,8,67),
+				Vector3(4,12,45),
+				Vector3(1,12,60),
+				Vector3(2,13,67),
 				Vector3(-2,10,74),
-				Vector3(-2,4,87),
-				Vector3(-2,8,92)
+				Vector3(-2,12,87),
+				Vector3(-2,13,92),
+				Vector3(2,14,170),
+				Vector3(2,14,160),
+				Vector3(2,14,150)
 			};
 			for (size_t i = 0; i < blocksSize; i++)
 			{
@@ -646,14 +652,27 @@ bool loadLevel(Vector3 playerPos) {
 				block->model.setTranslationVec(blocksPos[i]);
 				staticObjects.push_back(block);
 			}
-			lvl2isLoaded = true;
+			lvl3isLoaded = true;
 		}
 	}
 
-	water->model.setTranslationVec(coinPos[level]);
-	water->render();
+	if (level != 3) {
+		water->model.setTranslationVec(coinPos[level]);
+		water->render();
+	}
+	else {
+		finalnpc->model.setScale(0.01f, 0.01f, 0.01f);
+		finalnpc->model.rotate(180 * DEG2RAD, Vector3(0, 1, 0));
+		finalnpc->model.translateGlobal(coinPos[level].x, coinPos[level].y + 2, coinPos[level].z + 3.7f);
+		finalnpc->render();
+		pool->model.setScale(0.5f, 0.5f, 0.5f);
+		pool->model.translateGlobal(coinPos[level].x, coinPos[level].y, coinPos[level].z);
+		pool->render();
+	}
+	
+	
 
-	if (playerPos.distance(coinPos[level]) < 1.0f) {  //check if player got the coin, then change the level
+	if (playerPos.distance(coinPos[level]) < 1.5f) {  //check if player got the coin, then change the level
 		
 		if (level == 2) {					//play final level song
 			BASS_ChannelStop(lvls123SongChannel);
@@ -673,12 +692,17 @@ bool loadLevel(Vector3 playerPos) {
 			staticObjects.clear();
 			SetStage(STAGE_ID::EDITOR);
 		}
-		playerStruct.pos = Vector3(2, 0, 0); //reset player position
+
+		if (level == 1)
+			playerStruct.pos = Vector3(2, 30, 0); //reset player position
+		else
+			playerStruct.pos = Vector3(2, 0, 0); //reset player position
+
+ 		Game::instance->camera->lookAt(playerStruct.pos + Vector3(0,5,-10), playerStruct.pos, Vector3(0, 1, 0)); //resituate the camera for the editor
+
 		level = (level + 1) % levels;
 		GUI::RenderGUI(65, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/blue_button07.png"));
-		return true;
 	}
-	return false;
 }
 
 

@@ -21,11 +21,15 @@ extern bool wasLeftMousePressed;
 
 EntityMesh* sky;
 EntityMesh* ground;
+EntityMesh* lavaGround;
 EntityMesh* wall;
 EntityMesh* fence;
+EntityMesh* pool;
+EntityMesh* volcano;
 
 EntityMesh* jetpack;
 EntityMesh* npc;
+EntityMesh* finalnpc;
 EntityMesh* aiSun;
 
 std::vector<EntityMesh*> staticObjects;
@@ -43,6 +47,7 @@ Animation* dance;
 Animation* walk;
 Animation* idle;
 Animation* point;
+Animation* rest;
 
 bool cameraLocked = true;
 
@@ -80,27 +85,34 @@ Game::Game(int window_width, int window_height, SDL_Window* window)
 	//loading Mesh from Mesh Manager
 	playerObj = Mesh::Get("data/Chr_Dungeon_Skeleton_01_34.obj");
 	playerTex = Texture::Get("data/PolygonMinis_Texture.png");
-	Animation* dance = Animation::Get("data/animations/dance.skanim");
-	Animation* walk = Animation::Get("data/animations/walk.skanim");
-	Animation* idle = Animation::Get("data/animations/idle.skanim");
-	Animation* point = Animation::Get("data/animations/point.skanim");
+	dance = Animation::Get("data/animations/dance.skanim");
+	walk = Animation::Get("data/animations/walk.skanim");
+	idle = Animation::Get("data/animations/idle.skanim");
+	point = Animation::Get("data/animations/point.skanim");
+	rest = Animation::Get("data/animations/rest.skanim");
+
 	
 	// example of shader loading using the shaders manager
 	shader = Shader::Get("data/shaders/basic.vs", "data/shaders/texture.fs");
 	animShader = Shader::Get("data/shaders/skinning.vs", "data/shaders/texture.fs");
 
 	jetpack = new EntityMesh(Mesh::Get("data/Jetpack.obj"), Texture::Get("data/Jetpack_BaseColor.png"), shader, Vector4(1,1,1,1));
-	ground = new EntityMesh(Mesh::Get("data/platforms/ground.obj"), Texture::Get("data/platforms/sandTile.tga"), shader, Vector4(1,1,1,1));
+	ground = new EntityMesh(Mesh::Get("data/platforms/ground.obj"), Texture::Get("data/sand.tga"), shader, Vector4(1,1,1,1));
+	lavaGround = new EntityMesh(Mesh::Get("data/platforms/ground.obj"), Texture::Get("data/lava.tga"), shader, Vector4(1, 1, 1, 1));
 	sky = new EntityMesh(Mesh::Get("data/sky.ASE"), Texture::Get("data/sky.tga"), shader, Vector4(1, 1, 1, 1));
 	aiSun = new EntityMesh(Mesh::Get("data/sun_2.obj"), Texture::Get("data/color-atlas-new.png"), shader, Vector4(1,1,1,1));
 	aiSun->model.setTranslation(0, 10, -20);
 	wall = new EntityMesh(Mesh::Get("data/fence-big_8.obj"), Texture::Get("data/color-atlas-new.png"), shader, Vector4(1, 1, 1, 1));
 	fence = new EntityMesh(Mesh::Get("data/decoration/fence.obj"), Texture::Get("data/color-atlas-new.png"), shader, Vector4(1, 1, 1, 1));
+	pool = new EntityMesh(Mesh::Get("data/decoration/pool.obj"), Texture::Get("data/decoration/poolTex.png"), shader, Vector4(1, 1, 1, 1));
+	volcano = new EntityMesh(Mesh::Get("data/decoration/volcano.obj"), Texture::Get("data/decoration/volcano.png"), shader, Vector4(1, 1, 1, 1));
 
 	staticObjects.reserve(50);
 
 	player = new EntityMesh(playerObj, playerTex, shader, Vector4(1, 1, 1, 1));
 	npc = new EntityMesh(Mesh::Get("data/npc.mesh") , playerTex, animShader, Vector4(1, 1, 1, 1), "", "", point);
+	finalnpc = new EntityMesh(Mesh::Get("data/animations/dance.mesh"), playerTex, animShader, Vector4(1, 1, 1, 1), "", "", rest);
+
 
 	//hide the cursor
 	SDL_ShowCursor(!mouse_locked); //hide or show the mouse

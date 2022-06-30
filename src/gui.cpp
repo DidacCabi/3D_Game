@@ -51,39 +51,30 @@ bool GUI::RenderButton(float x, float y,  Texture* buttonTex) {
 	return wasLeftMousePressed && hover;
 }
 
-void GUI::RenderAllGUI() {
+void GUI::RenderAllGUI(bool canJump) {
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	RenderGUI(25, 25, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/jetpackFuel.png"));
-	RenderGUI(25, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/hydrated.png"));
-	//RenderGUI(100, 25, 100, 25, Vector4(1, 1, 1, 1), Texture::Get("data/red_button11.png"));
-	RenderGUI(100, 25, 100, 25, Vector4(1, 1, 1, 1), Texture::Get("data/red_button10.png"));
+	RenderGUI(25, 25, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/UI/jetpackFuel.png"));
+	RenderGUI(25, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/UI/hydrated.png"));
+	RenderGUI(100, 25, 100, 25, Vector4(1, 1, 1, 1), Texture::Get("data/UI/red_button10.png"));
 
 	for (int i = 0; i <= 50; i+=25) {
 
-		RenderGUI(65 + i, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/blue_button06.png"));
-
-		/*if (loadLevel(playerStruct.pos) == true) {
-			RenderGUI(65 + i, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/blue_button07.png"));
-			waterCounter++;
-		}*/
+		RenderGUI(65 + i, 55, 25, 25, Vector4(1, 1, 1, 1), Texture::Get("data/UI/blue_button06.png"));
 	}
-	if (Input::isKeyPressed(SDL_SCANCODE_SPACE)) {
+	if (Input::isKeyPressed(SDL_SCANCODE_SPACE) && canJump) {
 		
-		RenderGUI(100, 25, jumpCounter * 40, 25, Vector4(1, 1, 1, 1), Texture::Get("data/red_button11.png"));
-		//PlayGameSound("data/jetpack.mp3");
+		RenderGUI(100, 25, jumpCounter * 56, 25, Vector4(1, 1, 1, 1), Texture::Get("data/UI/red_button11.png"));
 	}
-	if (!Input::isKeyPressed(SDL_SCANCODE_SPACE)) {
-		RenderGUI(100, 25, jumpCounter * 40, 25, Vector4(1, 1, 1, 1), Texture::Get("data/red_button11.png"));
+	if (!Input::isKeyPressed(SDL_SCANCODE_SPACE) && canJump) {
+		RenderGUI(100, 25, jumpCounter * 56, 25, Vector4(1, 1, 1, 1), Texture::Get("data/UI/red_button11.png"));
 
 	}
 	
 		
-	//if()
-	//RenderButton(500, 500, Texture::Get("data/blue_panel.png"));
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glDisable(GL_BLEND);

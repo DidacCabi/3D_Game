@@ -16,7 +16,7 @@ class GUI {
 	public:
 		
 		static void RenderGUI(float start_x, float start_y, float w, float h, Vector4 color, Texture* tex);
-		static void RenderAllGUI();
+		static void RenderAllGUI(bool canJump);
 		static bool RenderButton(float x, float y, Texture* buttonTex);
 		static void RenderIntroGUI();
 		static void RenderMenuGUI();

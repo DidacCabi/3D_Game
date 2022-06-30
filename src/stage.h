@@ -63,7 +63,7 @@ public:
 class PlayStage : public Stage {
 public:
 	bool readedDecoration = false;
-	const float jumpTime = 3.2f;
+	const float jumpTime = 1.7f;
 	bool canJump = true;
 	bool isJumping = false;
 
@@ -79,8 +79,8 @@ public:
 	bool mode = false;   //switch between decoration and platforms mode
 	EntityMesh* selected = NULL;
 
-	int objectsPerLevel[4] = {1,2,4,2};
-	int objectsLeft[4] = {1,2,4,2};
+	int objectsPerLevel[4] = {1,2,4,3};
+	int objectsLeft[4] = {1,2,4,3};
 
 	STAGE_ID GetId();
 	void render();
@@ -123,5 +123,5 @@ void GroundRendering();
 void saveScene(const char* fileName);
 void readScene(const char* fileName, std::vector<EntityMesh*>* vector);
 
-bool loadLevel(Vector3 playerPos);
+void loadLevel(Vector3 playerPos);
 #endif 
