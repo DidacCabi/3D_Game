@@ -529,7 +529,6 @@ void saveScene(const char* fileName) {
 		myfile << "\n" << platform->meshPath << "\n";
 		myfile << platform->texPath << "\n";
 	}
-
 	myfile.close();
 }
 void readScene(const char* fileName, std::vector<EntityMesh*>* vector) {
@@ -639,7 +638,6 @@ bool loadLevel(Vector3 playerPos) {
 			Vector3(-2,10,74),
 			Vector3(-2,4,87),
 			Vector3(-2,8,92)
-
 			};
 			for (size_t i = 0; i < blocksSize; i++)
 			{

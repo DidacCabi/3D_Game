@@ -79,8 +79,8 @@ public:
 	bool mode = false;   //switch between decoration and platforms mode
 	EntityMesh* selected = NULL;
 
-	int objectsPerLevel[5] = {1,2,4,2,5};
-	int objectsLeft[5] = {1,2,4,2,5};
+	int objectsPerLevel[4] = {1,2,4,2};
+	int objectsLeft[4] = {1,2,4,2};
 
 	STAGE_ID GetId();
 	void render();

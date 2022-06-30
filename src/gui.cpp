@@ -150,12 +150,18 @@ void GUI::RenderTutoGUI() {
 
 	RenderGUI(width / 2, height / 2, width, height, Vector4(1, 1, 1, 1), Texture::Get("data/UI/background.tga"));
 	RenderGUI(width / 2, (height / 2) - 100, 165, 74, Vector4(1, 1, 1, 1), Texture::Get("data/UI/button_play.png"));
-	RenderGUI(100, 500, 200, 200, Vector4(1, 1, 1, 1), Texture::Get("data/UI/wasd.tga"));
-	RenderGUI(330, 500, 200, 200, Vector4(1, 1, 1, 1), Texture::Get("data/UI/p.png"));
-	RenderGUI(width / 2, (height / 2), 600, 100, Vector4(1, 1, 1, 1), Texture::Get("data/UI/text.png"));
-	drawText(30,550,"To move", Vector3(0,0,0), 3.0f);
-	drawText(250, 530, "To change between", Vector3(0, 0, 0), 1.5f);
-	drawText(260, 550, "play and editor", Vector3(0,0,0), 1.5f);
+	RenderGUI(100, 300, 200, 200, Vector4(1, 1, 1, 1), Texture::Get("data/UI/wasd.tga"));
+	RenderGUI(100, 500, 200, 200, Vector4(1, 1, 1, 1), Texture::Get("data/UI/p.png"));
+	RenderGUI(width / 2, 100, 600, 100, Vector4(1, 1, 1, 1), Texture::Get("data/UI/text.png"));
+	RenderGUI(width - 136, height - 92, 273, 185, Vector4(1, 1, 1, 1), Texture::Get("data/UI/editor.png"));
+	RenderGUI(400, height - 72, 250, 144, Vector4(1, 1, 1, 1), Texture::Get("data/UI/editor1.png"));
+
+	drawText(30,350,"To move", Vector3(0,0,0), 3.0f);
+	drawText(30, 530, "To change between", Vector3(0, 0, 0), 1.5f);
+	drawText(35, 550, "play and editor", Vector3(0, 0, 0), 1.5f);
+
+	drawText(280, 420, "On the editor:", Vector3(0, 0, 0), 3);
+
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
