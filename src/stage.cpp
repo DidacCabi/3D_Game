@@ -188,6 +188,7 @@ void PlayStage::render() {
 
 	jetpack->render();
 	GUI::RenderAllGUI();
+	GUI::fillWaterSquare(level);
 
 	drawText(Game::instance->window_width - 340, 20, "level " + std::to_string(level), Vector3(1, 1, 1), 3.0f);
 };
@@ -628,16 +629,16 @@ bool loadLevel(Vector3 playerPos) {
 
 			const int blocksSize = 10;
 			Vector3 blocksPos[blocksSize] = {
-			Vector3(0,0,10),
-			Vector3(2,3,15),
-			Vector3(0,7,20),
-			Vector3(-2,10,35),
-			Vector3(4,10,45),
-			Vector3(1,5,60),
-			Vector3(2,8,67),
-			Vector3(-2,10,74),
-			Vector3(-2,4,87),
-			Vector3(-2,8,92)
+				Vector3(0,0,10),
+				Vector3(2,3,15),
+				Vector3(0,7,20),
+				Vector3(-2,10,35),
+				Vector3(4,10,45),
+				Vector3(1,5,60),
+				Vector3(2,8,67),
+				Vector3(-2,10,74),
+				Vector3(-2,4,87),
+				Vector3(-2,8,92)
 			};
 			for (size_t i = 0; i < blocksSize; i++)
 			{
@@ -654,10 +655,11 @@ bool loadLevel(Vector3 playerPos) {
 
 	if (playerPos.distance(coinPos[level]) < 1.0f) {  //check if player got the coin, then change the level
 		
-		if (level == 2) {
+		if (level == 2) {					//play final level song
 			BASS_ChannelStop(lvls123SongChannel);
 			lvl4SongChannel = PlayGameSound("data/level4.wav",true);
 		}
+
 		if (level == (levels - 1)) {
 			staticObjects.clear();
 			isWin = true;
@@ -669,7 +671,6 @@ bool loadLevel(Vector3 playerPos) {
 		}
 		else {
 			staticObjects.clear();
-			GUI::fillWaterSquare();
 			SetStage(STAGE_ID::EDITOR);
 		}
 		playerStruct.pos = Vector3(2, 0, 0); //reset player position
@@ -679,6 +680,8 @@ bool loadLevel(Vector3 playerPos) {
 	}
 	return false;
 }
+
+
 
 HSAMPLE LoadSample(const char* fileName, bool loop) {
 
