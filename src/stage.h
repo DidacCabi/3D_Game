@@ -80,7 +80,6 @@ public:
 	EntityMesh* selected = NULL;
 
 	int objectsPerLevel[4] = {1,2,4,3};
-	int objectsLeft[4] = {1,2,4,3};
 
 	STAGE_ID GetId();
 	void render();

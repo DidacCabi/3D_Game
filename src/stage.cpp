@@ -52,6 +52,7 @@ bool menuSong = false;
 bool mouse_locked;
 extern bool cameraLocked;
 
+int objectsLeft[4] = { 1,2,4,3 };  //counter of the platforms placed per level
 
 HCHANNEL ostChannel;
 HCHANNEL lvls123SongChannel;
@@ -475,6 +476,10 @@ void EndStage::update(float seconds_elapsed) {
 		menuSong = false;
 		level = 0;
 		staticObjects.clear();
+		objectsLeft[0] = 1;
+		objectsLeft[1] = 2;
+		objectsLeft[2] = 4;
+		objectsLeft[3] = 3;
 		SetStage(STAGE_ID::INTRO); //return to the intro stage
 	}
 };
@@ -692,6 +697,7 @@ void loadLevel(Vector3 playerPos) {
 			else PlayGameSound("data/game_over.wav", false);
 		}
 		else {
+			staticObjects.clear();
 			SetStage(STAGE_ID::EDITOR);
 		}
 
